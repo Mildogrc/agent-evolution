@@ -18,7 +18,8 @@ The next five documents in this series will respectively discuss each of these c
 - **Characteristics:** Ideal for repetitive workflows with minimal decision-making, improving efficiency without requiring advanced intelligence. May not need LLMs, SLMs or custom ML models might suffice. Simple enough a task chain that no human intervention is required.
 - **Role of GenAI**: 
   1. _SLMs_ efficiently handle lightweight natural language queries, enabling chatbots to process common scheduling and email-related tasks. 
-  2. _LLMs_ enable more nuanced interactions, such as summarizing emails or extracting action items from meeting notes.
+  2. For most parts, the task bot could use purpose-built AI services (such as vision, NLP, speech, etc.), or a combination of all of them, to attain the set task.
+  3. _LLMs_ might be used for enable more nuanced interactions, such as summarizing emails or extracting action items from meeting notes.
 
 ### AI Automation Level 2: _Smart Flows_
 #### Workflow Orchestration to Integrate Intelligent Decisioning   
