@@ -23,7 +23,7 @@ The next five documents in this series will respectively discuss each of these c
   2. For most parts, the task bot could use purpose-built AI services (such as vision, NLP, speech, etc.), or a combination of all of them, to attain the set task.
   3. _LLMs_ might be used for enable more nuanced interactions, such as summarizing emails or extracting action items from meeting notes.
 
-## AI Automation Level 2: _Smart Flows_
+## AI Automation Level 2: _FlowBots_
 
 ### Workflow Orchestration to Integrate Intelligent Decisioning
 
@@ -39,7 +39,7 @@ The next five documents in this series will respectively discuss each of these c
     2. LLMs generate summaries of customer interactions, flagging urgent issues or recommending next-best actions.
     3. GenAI models integrate with APIs to optimize inventory planning based on demand forecasts.
 
-## AI Automation Level 3: _Omni Solves_
+## AI Automation Level 3: _InsightBots_
 
 ### Decision-Augmenting AI that Optimizes processes in Real-Time  
 
@@ -55,7 +55,7 @@ The next five documents in this series will respectively discuss each of these c
   2. LLMs process free-text insurance claims or fraud reports, correlating them with structured data for risk assessment.
   3. GenAI models synthesize insights across pricing, demand, and fraud signals, helping businesses react dynamically.
 
-## AI Automation Level 4: _Neuro Chains_
+## AI Automation Level 4: _NeuroBot_
 
 ### Autonomous Coordination and Management of Multiple Intelligent Systems
 
@@ -71,9 +71,9 @@ The next five documents in this series will respectively discuss each of these c
   2. LLMs analyze large datasets, predict demand surges, and suggest workflow adjustments.
   3. GenAI platforms integrate various agents (IoT sensors, logistics platforms, ERP systems) to automate decision-making with minimal human input.
 
-## AI Automation Level 5: _Sentient AI_
+## AI Automation Level 5: _SentientBot_
 
-### Self-Learning & Autonomous AI – Complete Automation
+### Self-Learning & Autonomous AI – Complete Autonomy
 
 ![Typical Level-5 Architecture](images/Level5.png)
 
