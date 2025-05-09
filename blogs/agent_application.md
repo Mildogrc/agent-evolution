@@ -35,10 +35,13 @@ Agents can be realized with varying techniques, amongst which we discuss four di
 ![Agent Deployments](images/agent_deploys.png)
 
 #### Tool-chaining with an external LLM
+In this setup, an *orchestrator*--a custom tool-chain--is built to implement the logic of the agent, while integrating with all enterprise assets. A very naive approach, wherein only a few aspects of LLM are employed. Bulk of the logic, most of the business flow, and all integrations are retained in the orchestrator. Many RAG use cases, classical-AI use cases typically employ this use case. 
 
 #### LLM with Tooling
+In this setup, LLM drives the functionality of the agent. The LLM uses reasoning to decide on a sequence of actions, and employs tools provided. Typically custom tooling is built to enable LLM to leverage enterprise assets. All endpoints of enterprise assets--REST APIs, data stores, partner APIs--get custom tooling to allow LLMs to discover, connect, and leverage them.
 
 #### LLM with MCP
+In this utopian setup, every enterprise asset is already MCP enabled
 
 #### LLMs/SLMs with MCP and A2A
 
