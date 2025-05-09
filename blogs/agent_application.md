@@ -41,13 +41,15 @@ In this setup, an *orchestrator*--a custom tool-chain--is built to implement the
 In this setup, LLM drives the functionality of the agent. The LLM uses reasoning to decide on a sequence of actions, and employs tools provided. Typically custom tooling is built to enable LLM to leverage enterprise assets. All endpoints of enterprise assets--REST APIs, data stores, partner APIs--get custom tooling to allow LLMs to discover, connect, and leverage them.
 
 #### LLM with MCP
-In this utopian setup, every enterprise asset is already MCP enabled
+[*"The Model Context Protocol (MCP) is an open standard that facilitates seamless integration between LLM applications and external data sources or tools."*](https://modelcontextprotocol.io/specification/2025-03-26/index)
+In this utopian setup, every enterprise asset is already MCP enabled and expose an MCP endpoint. LLM can now discover these MCP endpoints, and use the relevant enterprise assets to execute the required use cases. 
 
-#### LLMs/SLMs with MCP and A2A
+#### LLMs with MCP Server
+This is a  *middle-ground* implementation, wherein an MCP server, similar to an API gateway, exposes MCP endpoints abstracting the complex integrations behind the server. 
 
 
 ## An Illustrative Example: CRM Automation Agent
-Our sample implementations involved building agents for CRM. To exemplify the increasing complexity possible with agents, we chose to implement agents that can manage customer relations. The chosen toolset was Python, Google ADK, Ollama, and Llama/Gemma/Gemini-Flash. The CRM solution was HubSpot. 
+Our rudimentary implementations involved building agents for CRM demonstrating the capabilities of agents. To demonstrate the possibilities of implementing increasingly complex agents, we chose to implement agents that can manage customer relations. The chosen toolset was Python, Google ADK, Ollama, and Llama/Gemma/Gemini-Flash. The CRM solution was HubSpot. 
 
 ### HubSpot Taskbot - Level-1 Agents
 
@@ -65,8 +67,7 @@ In the case of the CRM example, a FlowBot, apart from entering the lead, also wo
 
 
 ### HubSpot InsightBot - Level-3 Agent
-InsightBots augment and list the potential paths with insights based on real-time findings. 
-
+InsightBots augment and list the potential paths with insights based on real-time findings.
 In the case of the CRM example, the InsightBot, apart from the actions of a FlowBot,
 
 
