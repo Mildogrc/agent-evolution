@@ -1,0 +1,16 @@
+1. Is starting with a quote fine? I am ok with it but I thought it is bad practice
+
+2. I notice you said the emergence of reasoning. I should probably do some more research on the topic for sure. However,
+are we limiting the fact that they are evolving based on reasoning. For instance a big step up was teaching LLMs coding
+that way they didn't need to estimate math equations and moreover have the power of code to their advantage. May not be reasoning
+but is certainly pertinent here.
+
+3. Might be a good idea to give names for different levels (e.g. 1. Tool Chaining, 2. LLM driver 3. LLM thinker 4. LLM creator 5. AGI)
+just a thought
+
+4. Also I am confused as to what exactly 2 is. Is it just 1 but the LLM can handle multiple orchestrators
+
+
+Tool-chaining with an external LLM:
+    Most of this looks good but I am curious. Should you not mention that for an external LLM, the LLM is not actually making any decisions
+    on how to go forward. 
