@@ -17,6 +17,9 @@
     * [Cost Analysis](#cost-analysis)
 <!-- TOC -->
 
+
+> Live content of the entry [here](https://github.com/Mildogrc/agent-evolution/blob/blogs/blogs/agent_application.md).
+
 There have been advancements in AI in the past four years, whose influence on mankind's future is significant and enduring. The pace of growth of AI capabilities is startling; startling enough to warrant significant inspection and abundant introspection. 
 
 
@@ -34,7 +37,7 @@ There have been advancements in AI in the past four years, whose influence on ma
 
 ## Experiments with Agents
 
-This blog post also aims to share our findings from experimenting with agents. Our efforts to build agents of all complexities are available on GitHub  [here](https://github.com/Mildogrc/agent-evolution). Our POV is that the agents can perform significant operations autonomously and can be classified from Level-1 to Level-5 based on implementation complexity. The goal is to keep this entry *'live'*, keeping it updated with results from our trials.
+This blog post also aims to share our findings from experimenting with agents. Our efforts to build agents of all complexities are available on GitHub  [here](https://github.com/Mildogrc/agent-evolution). Our POV is that the agents can perform significant operations autonomously and can be progressively classified from Level-1 to Level-5 based on problem/solution complexity. The goal is to keep this entry *'live'*, keeping it updated with results from our trials.
 
 ### Techniques of Agent Implementations
 Agents can be realized with varying techniques, amongst which we discuss four techniques the authors consider to be common. So far, a few different ways of building agents have been envisioned, and the technology involves [toolchain libraries](https://python.langchain.com/v0.1/docs/modules/agents/concepts/) that orchestrate operations using an LLM and APIs (for example, using [langchain](https://python.langchain.com/docs), an LLM itself invoking tools or APIs (for instance, [Amazon Bedrock](https://aws.amazon.com/blogs/machine-learning/harness-the-power-of-mcp-servers-with-amazon-bedrock-agents/) or any such agents that use [MCP](https://docs.anthropic.com/en/docs/agents-and-tools/mcp)), and [multi-agents](https://cloud.google.com/discover/what-are-ai-agents), where many LLM/SLM based agents interacting with each other (for instance, using [A2A](https://developers.googleblog.com/en/a2a-a-new-era-of-agent-interoperability/).) 
@@ -74,7 +77,7 @@ Our rudimentary implementations involved building agents for CRM demonstrating t
 
 As part of building a Level-1 agent, which we term `taskbots`, we took up the task of building a CRM client agent. TaskBots are aimed at automating simple, rule-based tasks. They employ LLMs or SLMs to leverage targeted set of features such as, language understanding, conversational ability, content generation, to achieve repetitive workflows with minimal decision-making. 
 
-The idea was agent can look at emails from clients (or potential clients), automatically extract the relevant information, and update CRM.  Our efforts are in [this GitHub repo](https://github.com/Mildogrc/agent-evolution/tree/level-1-hubspot). An outline of our implementation efforts is this:
+The idea was agent can look at emails from clients (or potential clients), automatically extract the relevant information, and update CRM.  Our efforts are in [this GitHub repo](https://github.com/Mildogrc/agent-evolution/). An outline of our implementation efforts is this:
 1. We built code that is capable of creating and managing leads. We exposed two Python functions, `create_lead()` to create a new lead in the HubSpot, and `create_meeting()` to set up a meeting with the new lead. These functions took the necessary information in a key-value format: `{email:"<>", firstname:"", lastname:""...}`
 2. We wrote an agent prompt asking it to parse an email from a potential lead, find the relevant data, call the tooling to create an entry in HubSpot.
 
