@@ -8,10 +8,21 @@
       * [LLM with Tooling](#llm-with-tooling)
       * [LLM with MCP](#llm-with-mcp)
       * [LLMs with MCP Server](#llms-with-mcp-server)
+    * [Comparison of Approaches](#comparison-of-approaches)
+      * [Control vs Flexibility](#control-vs-flexibility)
+      * [Development complexity](#development-complexity)
+      * [Cost](#cost)
+      * [Reliance on LLM Reasoning](#reliance-on-llm-reasoning)
+  * [Security of AI Agents](#security-of-ai-agents)
+  * [Observability of Agents](#observability-of-agents)
+    * [History of Monitoring Agents](#history-of-monitoring-agents)
+    * [Tools and Frameworks](#tools-and-frameworks)
   * [An Illustrative Example: CRM Automation Agent](#an-illustrative-example-crm-automation-agent)
     * [HubSpot Taskbot - Level-1 Agents](#hubspot-taskbot---level-1-agents)
+  * [-----](#-----)
     * [HubSpot FlowBot - Level-2 Agent](#hubspot-flowbot---level-2-agent-)
     * [HubSpot InsightBot - Level-3 Agent](#hubspot-insightbot---level-3-agent)
+    * [Level-4 Agents (NeuroBots) and Level-5 Agents (AGI)](#level-4-agents-neurobots-and-level-5-agents-agi)
   * [Further Topics to Explore](#further-topics-to-explore)
     * [Cost Analysis](#cost-analysis)
     * [A2A Complexity](#a2a-complexity)
@@ -111,11 +122,16 @@ We have two different implementations of Level-1 Agents: 1/ A Google ADK based i
 
 -----
 ![Agent Deployments](images/hstool1.png)
-Agent with direct tool-calling
+
+**Agent with direct tool-calling**
+
 -----
 -----
+
 ![Agent Deployments](images/hstool2.png)
-Agent that uses MCP
+
+**Agent that uses MCP**
+
 -----
 
 
