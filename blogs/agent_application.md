@@ -82,9 +82,11 @@ This is a middle-ground implementation in which an MCP server, similar to an API
 * **Control vs Flexibility**
   * When LLM uses tool directly, we observed that if LLM is given an example dataset, LLM can easily identify the right content to send to the tool. 
   * Though the LLM capability gives more control to embed the tool directly, architecturally it does not appear clean. Adding MCP adds a level of indirection and necessary abstraction.
+  * Google ADK is easier to install and run, and automatically comes with a runner that allows a web interface to chat with the agent.
 
 * **Development Complexity**
   * We observed that developing MCP is not straightforward. The releases are still new (version 0.x), and when used with FastAPI, run into version incompatibility challenges. It took many attempts trying different versions to find the compatible library (refer to requirements.txt)
+  * Though we started with uvicorn to run the MCP server, we realized the need ofa user interface  monitor the MCP server status. We switched from `uvicorn` to using `streamlit`, but required us multiple refactoring to fix the integration between FastMCP, FastAPI, and tools.
 
 
 #### Reliance on LLM Reasoning
