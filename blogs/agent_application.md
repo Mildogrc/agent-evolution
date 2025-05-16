@@ -109,6 +109,15 @@ The idea was that an agent could look at emails from clients (or potential clien
 
 We have two different implementations of Level-1 Agents: 1/ A Google ADK based implementation that directly discovers and uses tools to create a lead based on emails, and 2/ an agent implementation that uses the same tools via an MCP server.
 
+-----
+![Agent Deployments](images/hstool1.png)
+Agent with direct tool-calling
+-----
+-----
+![Agent Deployments](images/hstool2.png)
+Agent that uses MCP
+-----
+
 
 ### HubSpot FlowBot - Level-2 Agent 
 A FlowBot improves upon a TaskBot by implementing a multistep flow. 
