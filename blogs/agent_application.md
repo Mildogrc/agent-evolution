@@ -77,9 +77,16 @@ In this fully integrated vision, every enterprise asset is already MCP-enabled a
 This is a middle-ground implementation in which an MCP server, similar to an API gateway, exposes MCP endpoints, abstracting the complex integrations behind the server. 
 
 ### Comparison of Approaches
-#### Control vs Flexibility
-#### Development complexity
-#### Cost
+
+#### Our Observations
+* **Control vs Flexibility**
+  * When LLM uses tool directly, we observed that if LLM is given an example dataset, LLM can easily identify the right content to send to the tool. 
+  * Though the LLM capability gives more control to embed the tool directly, architecturally it does not appear clean. Adding MCP adds a level of indirection and necessary abstraction.
+
+* **Development Complexity**
+  * We observed that developing MCP is not straightforward. The releases are still new (version 0.x), and when used with FastAPI, run into version incompatibility challenges. It took many attempts trying different versions to find the compatible library (refer to requirements.txt)
+
+
 #### Reliance on LLM Reasoning
 
 Papers on Autonomous AI, self-improving systems, and long-term AI strategy - research papers.
