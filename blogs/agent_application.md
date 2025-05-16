@@ -19,7 +19,6 @@
     * [Tools and Frameworks](#tools-and-frameworks)
   * [An Illustrative Example: CRM Automation Agent](#an-illustrative-example-crm-automation-agent)
     * [HubSpot Taskbot - Level-1 Agents](#hubspot-taskbot---level-1-agents)
-  * [-----](#-----)
     * [HubSpot FlowBot - Level-2 Agent](#hubspot-flowbot---level-2-agent-)
     * [HubSpot InsightBot - Level-3 Agent](#hubspot-insightbot---level-3-agent)
     * [Level-4 Agents (NeuroBots) and Level-5 Agents (AGI)](#level-4-agents-neurobots-and-level-5-agents-agi)
@@ -120,20 +119,13 @@ The idea was that an agent could look at emails from clients (or potential clien
 
 We have two different implementations of Level-1 Agents: 1/ A Google ADK based implementation that directly discovers and uses tools to create a lead based on emails, and 2/ an agent implementation that uses the same tools via an MCP server.
 
------
-![Agent Deployments](images/hstool1.png)
+---
 
-**Agent with direct tool-calling**
+| Level-1 Agent with direct tool-calling                                 | Level-1 Agent that uses MCP |
+|------------------------------------------------------------------------|---|
+| <img src="images/hstool1.png" alt="Agent + Tool-calling" width="600"/> | <img src="images/hstool2.png" alt="Agent + MCP Server" width="600"/> |
 
------
------
-
-![Agent Deployments](images/hstool2.png)
-
-**Agent that uses MCP**
-
------
-
+---
 
 ### HubSpot FlowBot - Level-2 Agent 
 A FlowBot improves upon a TaskBot by implementing a multistep flow. 
