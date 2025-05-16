@@ -168,3 +168,47 @@ We realize that multi-agent solutions (with A2A) are complicated. The inherent c
 Interestingly, many design principles of building systems apply in designing agent-based automation. Should there be a single agent capable of doing the entire workflow? Should many agents be cooperating? How will the agents cooperate? *(Cf. orchestration and choreography in microservices architecture)*
 
 We will treat A2A in later blog posts.
+
+
+
+
+### References and Further Reading
+
+**Academic Papers and Collections:**
+
+* [*Modeling Adaptive Autonomous Agents*](https://direct.mit.edu/artl/article-abstract/1/1_2/135/2256/Modeling-Adaptive-Autonomous-Agents) by Pattie Maes (1993)
+* **FLAN (Finetuned Language Net) Collection:**
+    * [*Finetuned Language Models Are Zero-Shot Learners*](https://arxiv.org/abs/2109.01652) by Jason Wei, Maarten Bosma, Vincent Y. Zhao, Kelvin Guu, Adams Wei Yu, Brian Lester, Nan Du, Andrew M. Dai, Quoc V. Le (2021).
+    * [*Scaling instruction-finetuned language models*](https://arxiv.org/abs/2210.11416) by Chung, H. W. et al (2022).
+* **Research on Autonomous AI, Self-Improving Systems, Long-Term AI Strategy:**
+
+**Organizational Projects and Initiatives:**
+
+* **NASA's Projects (related to autonomous agents):**
+    * [Remote Agent: To Boldly Go Where No AI System Has
+ Gone Before](http://www.ai.mit.edu/courses/6.834J-f01/Williams-remote-agent-aij98.pdf) by  Nicola Muscettolay, P. Pandurang Nayak, Barney Pell, Brian C. Williams (1998)
+* **DARPA's Work (Explainable AI, Interpretable RL):**
+    *  *[DARPA’s explainable artificial intelligence (XAI) program](https://ojs.aaai.org/aimagazine/index.php/aimagazine/article/download/2850/3419)* by Gunning, David, and David Aha. AI magazine 40.2 (2019): 44-58.
+
+**Tools, Frameworks, and Standards (Documentation/Websites):**
+
+* **Model Context Protocol (MCP):**
+    * _[MCP Specification](https://modelcontextprotocol.io/specification/2025-03-26)
+* **OpenTelemetry:**
+    * _Website:_ [https://opentelemetry.io/](https://opentelemetry.io/)
+    * _Specific Comments:_ [OpenTelemetry's view](https://opentelemetry.io/blog/2025/ai-agent-observability/)
+* **Langfuse:**
+    * _Website:_ [https://langfuse.com/](https://langfuse.com/)
+* **OpenLLMetry:**
+    * [TraceLoop OpenLLMetry Website](https://www.traceloop.com/openllmetry)
+    * [Github project](https://github.com/traceloop/openllmetry)
+
+* **Helicone:**
+    * _Website:_ [https://www.helicone.ai/](https://www.helicone.ai/)
+* **Phoenix (from Arize AI):**
+    * [Phoenix Arize Website](https://arize.com/phoenix)
+    * [Github project for Arize](https://github.com/arize-ai/phoenix)
+
+* **AgentOps:**
+    * _Website:_ [https://agentops.ai/](https://agentops.ai/)
+
