@@ -109,15 +109,22 @@ Refer to our git repo for examples on how to use Langfuse.
 ## An Illustrative Example: CRM Automation Agent
 Our rudimentary implementations involved building CRM agents and demonstrating their capabilities.  We chose to implement agents that can *manage customer relations* to demonstrate the possibilities of implementing increasingly complex agents. The toolset we chose was Python, Google ADK, Ollama, and Llama/Gemma/Gemini-Flash. The CRM solution was HubSpot. 
 
+> *No pictures means it didn't happen*
+> 
+> *No working code means it didn't happen*
+
+
 ### HubSpot Taskbot - Level-1 Agents
 
 As part of building a Level-1 agent (which we term `taskbots`), we built a CRM client agent. TaskBots are aimed at automating simple, rule-based tasks. Employing LLMs or SLMs to leverage targeted features, such as language understanding, conversational ability, and content generation, to achieve repetitive workflows with minimal decision-making.
 
 The idea was that an agent could look at emails from clients (or potential clients), automatically extract the relevant information, and update the CRM. Our efforts are in [this GitHub repo](https://github.com/Mildogrc/agent-evolution/). An outline of our implementation efforts is this:
 1. We built code that is capable of creating and managing leads. We exposed two Python functions, `create_lead()`, to create a new lead in HubSpot, and `create_meeting()`, to set up a meeting with the new lead. These functions took the necessary information in a key-value format `{email:"<>", firstname:"", lastname:""...}`
-2. We wrote an agent prompt asking it to parse an email from a potential lead, find the relevant data, and call the tooling to create an entry in HubSpot.
+2. We wrote an agent prompt asking it to parse an email from a potential lead, find the relevant data, and call the tooling to create an entry in HubSpot. After that it creates an entry in a local Postgres database with <`lead-id`, `user-name`, `user-email`> for future reference
 
-We have two different implementations of Level-1 Agents: 1/ A Google ADK based implementation that directly discovers and uses tools to create a lead based on emails, and 2/ an agent implementation that uses the same tools via an MCP server.
+We have two different implementations of Level-1 Agents: 
+1. A Google ADK based implementation that directly discovers and uses tools to create a lead based on emails, and 
+2. an agent implementation that uses the same tool-calling via an MCP server.
 
 ---
 
@@ -138,7 +145,8 @@ InsightBots augment and list the potential paths with insights based on real-tim
 
 In the CRM example, InsightBot plans a strategy to handle the lead. InsightBot might look at the leads holistically, do a background check, and devise the best way to handle them. Then, InsightBot prompts an approver to determine whether the plan needs changes or is good to execute. Once a human/admin finalizes the plan, InsightBot will manage it. 
 
-Given the complexity of such an endeavor, this is a moonshot.
+> Considering the intricate nature of this project and our limited resources with a constrained timeframe, this represents an ambitious undertaking and a significant stretch goal for us.
+
 
 ### Level-4 Agents (NeuroBots) and Level-5 Agents (AGI)
 The agent implementations could get further complex and more autonomous. A level-4 agent could coordinate with multiple AI agents to optimize complex processes. A level-5 agent could execute operations with full autonomy--it could continuously adapt and self-optimize, handling complex interdependent business processes.
