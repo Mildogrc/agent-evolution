@@ -9,3 +9,6 @@ uvicorn==0.34.2
 pydantic==2.11.3
 pydantic-settings==2.9.1
 python-dotenv==1.1.0
+langchain>=0.1.12
+langchain-community>=0.0.28
+requests==2.31.0
