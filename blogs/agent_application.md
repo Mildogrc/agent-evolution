@@ -30,17 +30,17 @@
 
 > Live content of the entry [here](https://github.com/Mildogrc/agent-evolution/blob/blogs/blogs/agent_application.md).
 
-Significant advancements in AI have occurred in the past four years, and their influence on humanity's future is substantial and enduring. The pace of growth of AI capabilities is startling. It is alarming enough to warrant copious inspection and abundant introspection.
+Significant advancements in AI have occurred in the past four years, and their influence on humanity's future is substantial and enduring. The pace of growth of AI capabilities is startling. It is alarming enough to warrant copious inspection and abundant introspection.  [AI Agents are at the forefront](https://globalventuring.com/corporate/information-technology/corporates-rush-to-invest-in-ai-agents/)  of AI implementation projects owing to the ease of building components that can perform operations requiring language, reasoning, logical deduction, pattern recognition, and other areas that were historically [considered humans' forte](https://arxiv.org/html/2404.01869v2).
 
 
 ## The Coming of AI Agents
 
 > For the topic of this discussion: The term *agents*, along with the terms *autonomous agents*, or *AI agents*, refers to standalone decision-making system that leverages LLMs. 
 
- [AI Agents are at the forefront](https://globalventuring.com/corporate/information-technology/corporates-rush-to-invest-in-ai-agents/)  of AI implementation projects owing to the ease of building components that can perform operations requiring language, reasoning, logical deduction, pattern recognition, and other areas that were historically [considered humans' forte](https://arxiv.org/html/2404.01869v2). Initially, LLMs were pattern matches that learned the statistical relevance between words and chatbots that generated coherent volumes of textual responses. The emergence of LLMs as drivers of autonomous agents was due to 1/ stronger reasoning, 2/ instruction following, 3/ tool-use rationale, and 4/ code-generation. These changes were brought about in LLMs as a [series of improvements](https://arxiv.org/abs/2206.07682) with techniques such as
+ Initially, LLMs were pattern matches that learned the statistical relevance between words and chatbots that generated coherent volumes of textual responses. The emergence of LLMs as drivers of autonomous agents was due to 1/ stronger reasoning, 2/ instruction following, 3/ tool-use rationale, and 4/ code-generation. These changes were brought about in LLMs as a [series of improvements](https://arxiv.org/abs/2206.07682) with techniques such as:
 
 - [Scaling up models]( https://arxiv.org/abs/2005.14165) enabled capabilities beyond pattern-matching
-- *[Transformers (attention mechanism)](https://arxiv.org/abs/1706.03762)* that allowed capturing long-range dependencies
+- *[Transformers (attention mechanism)](https://arxiv.org/abs/1706.03762)* that allowed LLMs to capture long-range dependencies
 - instruction tuning with high-quality reasoning Q&As *cf.* [FLAN collection](https://research.google/blog/google-research-2022-beyond-language-vision-and-generative-models/) 
 - [Chain-of-Thought (CoT) prompting](https://arxiv.org/abs/2201.11903) that shows steps before answering.
 
@@ -49,9 +49,9 @@ This series of blogs is an attempt to capture our experiments with developing ag
 
 > It is interesting that the original ideas for building AI-based autonomous software, which learns by observing and training, is 30+ years old! For example, the paper *Modeling Adaptive Autonomous Agents* by Pattie Maes, published in the early 1990s, defines adaptive, autonomous, and intelligent agents. She proposed an intelligent system that can effectively monitor and learn from observing its environment rather than requiring explicit programming or complex symbolic logic. Though we have made massive technological strides today, some of the problems identified decades ago are still relevant.
 
-## Experiments with Agents
+## Experimenting with Agents
 
-This blog post also aims to share our findings from experimenting with agents. Our efforts to build agents of all complexities are available on GitHub  [here](https://github.com/Mildogrc/agent-evolution). Our POV is that the agents can perform significant operations autonomously. Furthermore, they could be progressively classified from Level-1 to Level-5 based on problem/solution complexity and autonomy. The goal is to keep this entry *'live'* updated with trial results.
+This writeup aims to share our findings from experimenting with agents. Our efforts to build agents of all complexities are available on GitHub  [here](https://github.com/Mildogrc/agent-evolution). Our POV is that the agents can perform significant operations autonomously. Furthermore, they could be progressively classified from Level-1 to Level-5 based on problem/solution complexity and autonomy. The goal is to keep this entry *'live'* updated with trial results.
 
 ### Techniques of Agent Implementations
 So far, engineers have envisioned a few different ways of building agents; let us look at the four most popular techniques. A typical implementation involves [tool-calling libraries](https://python.langchain.com/v0.1/docs/modules/agents/concepts/) that orchestrate operations using an LLM and APIs (for example, using [langchain](https://python.langchain.com/docs), an LLM itself invoking tools or APIs (for instance, [Amazon Bedrock](https://aws.amazon.com/blogs/machine-learning/harness-the-power-of-mcp-servers-with-amazon-bedrock-agents/) or any such agents that use [MCP](https://docs.anthropic.com/en/docs/agents-and-tools/mcp)), and [multi-agents](https://cloud.google.com/discover/what-are-ai-agents), where many LLM-based or SLM-based agents interacting with each other (for instance, using [A2A](https://developers.googleblog.com/en/a2a-a-new-era-of-agent-interoperability/).) 
@@ -116,11 +116,11 @@ Refer to our git repo for examples of how to use Langfuse.
 
 
 ## An Illustrative Example: CRM Automation Agent
-Our rudimentary implementations involved building CRM agents and demonstrating their capabilities. We chose to implement agents that can *manage customer relations* to demonstrate the possibilities of implementing increasingly complex agents. The toolset we chose was Python, Google ADK, Ollama, and Llama/Gemma/Gemini-Flash. The CRM solution was HubSpot. 
+For the past two months, we have been working on a rudimentary implementation, which involved building CRM agents and demonstrating their capabilities. We chose to implement agents that can *manage customer relations* to demonstrate the possibilities of implementing increasingly complex agents. The toolset we chose was Python, Google ADK, Langchain, Ollama, Llama3/Gemma3/Gemini-Flash. The CRM solution was HubSpot. 
 
-> *No pictures means it didn't happen*
-> 
-> *No working code means it didn't happen*
+> **Rules of the universe:** \
+> *No pictures = it didn't happen* \
+> *No working code = it doesn't matter*
 
 
 ### HubSpot Taskbot - Level-1 Agents
@@ -154,7 +154,7 @@ InsightBots augment and list the potential paths with insights based on real-tim
 
 In the CRM example, InsightBot plans a strategy to handle the lead. InsightBot might look at the leads holistically, do a background check, and devise the best way to handle them. Then, InsightBot prompts an approver to determine whether the plan needs changes or is good to execute. Once a human/admin finalizes the plan, InsightBot will manage it. 
 
-> Considering the intricate nature of this project and our limited resources with a constrained timeframe, this represents an ambitious undertaking and a significant stretch goal for us.
+> Considering the complex nature of a level-3 agent, and our limited resources with a constrained timeframe, this represents an ambitious undertaking and a significant stretch goal for us.
 
 
 ### Level-4 Agents (NeuroBots) and Level-5 Agents (AGI)
