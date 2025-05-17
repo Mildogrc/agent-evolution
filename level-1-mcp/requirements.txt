@@ -1,0 +1,11 @@
+fastapi==0.115.12
+fastapi-mcp==0.3.3
+fastmcp==2.3.3
+keyring==25.6.0
+psycopg2==2.9.10
+psycopg2-binary==2.9.10
+streamlit==1.32.2
+uvicorn==0.34.2
+pydantic==2.11.3
+pydantic-settings==2.9.1
+python-dotenv==1.1.0
