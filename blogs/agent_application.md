@@ -71,7 +71,9 @@ So far, engineers have envisioned a few different ways of building agents; let u
 
 ----
 
-The above diagram depicts the four most common patterns of agent deployment.
+The above diagram conceptually depicts the four most common patterns of agent deployment. 
+
+> The diagram is a conceptual simplification. The agent framework/orchestrator still exists in scenarios 2, 3, and 4; remember that LLMs are reasoning engines, not execution environments.
 
 #### Tool-calling with an external LLM
 In this setup, an *orchestrator* (a custom tool-call chain) implements the logic while integrating with all enterprise assets and LLMs. This foundational approach uses a simple integration pattern, wherein only a few aspects of LLM are employed. The orchestrator retains most of the logic, most of the business flow, and all integrations. Many RAG and classical AI use cases typically employ this use case.
@@ -123,7 +125,8 @@ Model stealing is a huge problem in LLMs: any LLM or ML as a service is suscepti
 
 We recommend a few basic design decisions to help devise the agents securely, based on some of our learnings and implementations:
 In our current implementations, we explicitly separated an agent's data and prompt/instruction inputs. A great technique is to ensure the data received by LLM is [structured](https://arxiv.org/abs/2402.06363)—it is important to preprocess the data where possible. This avoids prompt injections and poisoning the core data and prompts.\
-[Registration of agents and users](https://www.solo.io/blog/prevent-mcp-tool-poisoning-with-registration-workflow) is an option, thereby enabling tracing and non-repudiation. This approach proposes an *agent gateway* that registers and validates the source.
+[Registration of agents and users](https://www.solo.io/blog/prevent-mcp-tool-poisoning-with-registration-workflow) is an option, thereby enabling tracing and non-repudiation. This approach proposes an *agent gateway* that registers and validates the source.\
+*Sessions*, which exist in most agent-to-LLM interactions, can leverage authentication and access controls to limit the data an agent session accesses. [Sessions are stateful and contextual](https://python.langchain.com/docs/how_to/chatbots_memory/), and could be leveraged similarly to web sessions in user interactions.\
 [Another approach, termed multi-agent shield](https://arxiv.org/abs/2403.04783), where a set of LLMs/SLMs critiques the agents' output. A variation of this approach (and a cheaper one) is to have a dedicated LLM/SLM acting as a filter to detect malicious queries before they are fed into the agent. 
 
 ## Observability of Agents
@@ -146,7 +149,7 @@ Though there are other popular open source with more capabilities, such as [Heli
 
 
 ## An Illustrative Example: CRM Automation Agent
-For the past two months, we have been working on a rudimentary implementation, which involved building CRM agents and demonstrating their capabilities. We chose to implement agents that can *manage customer relations* to demonstrate the possibilities of implementing increasingly complex agents. The toolset we chose was Python, Google ADK, Langchain, Ollama, Llama3/Gemma/Gemini-Flash. The CRM solution was HubSpot. 
+For the past two months, we have been working on a rudimentary implementation, which involved building CRM agents and demonstrating their capabilities. We chose to implement agents that can *manage customer relations* to demonstrate the possibilities of implementing increasingly complex agents. The toolset we chose was Python, Google ADK, Langchain, Ollama, Llama2/Gemma/Gemini-Flash. The CRM solution was HubSpot. 
 
 > **Rules of the universe:** \
 > *No pictures = it didn't happen* \
@@ -194,6 +197,8 @@ In the CRM example, a level-4 agent—a highly complex agent (or set of agents)�
 
 A level-5 agent, a theoretical AGI, would be fully autonomous. They would handle everything from creating marketing campaigns to finding leads, contacting them, planning a strategy, scheduling meetings, demoing the products or services, and attempting to make a sale. They could even handle customer support.
 
+
+
 ## Further Topics to Explore
 
 The experiments sparked interesting insights and thought-provoking discussions, which need further exploration and will be part of future blog posts.
@@ -220,8 +225,7 @@ Though in early stages, there are already a few A2A efforts: [CrewAI](https://ww
 
 We will treat A2A in later blog posts.
 
-
-
+----
 
 ### References and Further Reading
 
@@ -256,22 +260,24 @@ We will treat A2A in later blog posts.
     *  *[DARPA’s explainable artificial intelligence (XAI) program](https://ojs.aaai.org/aimagazine/index.php/aimagazine/article/download/2850/3419)* by Gunning, David, and David Aha. AI magazine 40.2 (2019): 44-58.
 
 **Tools, Frameworks, and Standards (Documentation/Websites):**
-
-* **Model Context Protocol (MCP):**
-    * _[MCP Specification](https://modelcontextprotocol.io/specification/2025-03-26)
-* **OpenTelemetry:**
-    * _Website:_ [https://opentelemetry.io/](https://opentelemetry.io/)
-    * _Specific Comments:_ [OpenTelemetry's view](https://opentelemetry.io/blog/2025/ai-agent-observability/)
-* **Langfuse:**
-    * _Website:_ [https://langfuse.com/](https://langfuse.com/)
-* **OpenLLMetry:**
-    * [TraceLoop OpenLLMetry Website](https://www.traceloop.com/openllmetry)
-    * [Github project](https://github.com/traceloop/openllmetry)
-* **Helicone:**
-    * _Website:_ [https://www.helicone.ai/](https://www.helicone.ai/)
-* **Phoenix (from Arize AI):**
-    * [Phoenix Arize Website](https://arize.com/phoenix)
-    * [Github project for Arize](https://github.com/arize-ai/phoenix)
-* **AgentOps:**
-    * _Website:_ [https://agentops.ai/](https://agentops.ai/)
+* **Agent Frameworks**
+    * [_Google ADK_](https://google.github.io/adk-docs), Googles's open-source framework for agent development.
+    * [_LangChain_](https://python.langchain.com/docs/get_started/introduction), composable framework to build with LLMs and more.
+* **LLMs**
+    * [_Ollama_](https://ollama.ai/) to run LLMs locally
+    * [_Llama2_](https://ai.meta.com/llama/), a collection of open-source models by Meta
+    * [_Gemma_](https://ai.google.dev/gemma), a lightweight model collection by Google
+    * [_Gemini-Flash_](https://deepmind.google/technologies/gemini/flash/), a family of LLMs hosted on Google infrastructure
+* **Specifications:**
+    * [_MCP Specification_](https://modelcontextprotocol.io/specification/2025-03-26) by Anthropic, a standard for agent-to-tool communication
+* **Observability:**
+    * [_OpenTelemetry Website_](https://opentelemetry.io/)
+    * [_Agent Blog by OpenTelementry_](https://opentelemetry.io/blog/2025/ai-agent-observability/)
+    * [_LangFuse Website_](https://langfuse.com/)
+    * [_TraceLoop OpenLLMetry Website_](https://www.traceloop.com/openllmetry)
+    * [_TraceLoop Github project_](https://github.com/traceloop/openllmetry)
+    * [_Helicone Website_](https://www.helicone.ai/)
+    * [_Phoenix Arize Website_](https://arize.com/phoenix)
+    * [_Github project for Arize_](https://github.com/arize-ai/phoenix)
+    * [_AgentOps Website_](https://agentops.ai/)
 
