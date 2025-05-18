@@ -51,7 +51,12 @@ This series of blogs is an attempt to capture our experiments with developing ag
 
 ## Experimenting with Agents
 
-This writeup aims to share our findings from experimenting with agents. Our efforts to build agents of all complexities are available on GitHub  [here](https://github.com/Mildogrc/agent-evolution). Our POV is that the agents can perform significant operations autonomously. Furthermore, they could be progressively classified from Level-1 to Level-5 based on problem/solution complexity and autonomy. The goal is to keep this entry *'live'* updated with trial results.
+This writeup aims to share our findings from experimenting with agents. 
+ 
+> **Note: <span style="font-color: #ffaaaa;"> Our efforts to build agents of all complexities are available on GitHub [here](https://github.com/Mildogrc/agent-evolution), along with this article and other in progress </span>.**
+
+
+ Our POV is that the agents can perform significant operations autonomously. Furthermore, they could be progressively classified from Level-1 to Level-5 based on problem/solution complexity and autonomy. The goal is to keep this entry *'live'* updated with trial results.
 
 ### Techniques of Agent Implementations
 So far, engineers have envisioned a few different ways of building agents; let us look at the four most popular techniques. A typical implementation involves [tool-calling libraries](https://python.langchain.com/v0.1/docs/modules/agents/concepts/) that orchestrate operations using an LLM and APIs (for example, using [langchain](https://python.langchain.com/docs), an LLM itself invoking tools or APIs (for instance, [Amazon Bedrock](https://aws.amazon.com/blogs/machine-learning/harness-the-power-of-mcp-servers-with-amazon-bedrock-agents/) or any such agents that use [MCP](https://docs.anthropic.com/en/docs/agents-and-tools/mcp)), and [multi-agents](https://cloud.google.com/discover/what-are-ai-agents), where many LLM-based or SLM-based agents interacting with each other (for instance, using [A2A](https://developers.googleblog.com/en/a2a-a-new-era-of-agent-interoperability/).) 
@@ -83,33 +88,38 @@ This is a middle-ground implementation in which an MCP server, similar to an API
   * When LLM uses tool directly, we observed that if LLM is given an example dataset, LLM can easily identify the right content to send to the tool. 
   * Though the LLM capability gives more control to embed the tool directly, architecturally it does not appear clean. Adding MCP adds a level of indirection and necessary abstraction.
   * Google ADK is easier to install and run, and automatically comes with a runner that allows a web interface to chat with the agent.
+  * LangChain enforces certain constraints in developing the agent; this allows a little more *'compile-time validation'*, making it easier to build the agent correctly. 
 
 * **Development Complexity**
   * We observed that developing MCP is not straightforward. The releases are still new (version 0.x), and when used with FastAPI, run into version incompatibility challenges. It took many attempts trying different versions to find the compatible library (refer to requirements.txt)
   * Though we started with uvicorn to run the MCP server, we realized the need ofa user interface  monitor the MCP server status. We switched from `uvicorn` to using `streamlit`, but required us multiple refactoring to fix the integration between FastMCP, FastAPI, and tools.
+  * Writing a correct prompt for langchain agent took (any agent will take) a while. This is a challenge that will appear in most agents. For instance, in our case, we had to alter the prompts to discard emails that are not leads, correctly identify contents for calling the tool, and correct the json data types.
 
-
-#### Reliance on LLM Reasoning
-
-Papers on Autonomous AI, self-improving systems, and long-term AI strategy - research papers.
 
 ## Security of AI Agents
 
-As agents become more autonomous and try to learn from historical decisions, security concerns escalate.[OWASP Agentic AI](https://genai.owasp.org/resource/agentic-ai-threats-and-mitigations/) effort, which expands on [OWASP's LLM top 10 risks](https://genai.owasp.org/llm-top-10/), lists what the OWASP group thinks are the current primary threats for agentic implementations. After we grouped them with other sources and sort them, we summarized them picked what consider the top three: prompt injection, data leakage, and malicious tools. 
+As agents become more autonomous and try to learn from historical decisions, security concerns escalate. [OWASP Agentic AI](https://genai.owasp.org/resource/agentic-ai-threats-and-mitigations/) effort, which expands on [OWASP's LLM top 10 risks](https://genai.owasp.org/llm-top-10/), lists what the OWASP group thinks are the current primary threats for agentic implementations. After we grouped them with other sources and sort them, we summarized them picked what consider the top three: prompt injection, data leakage, and malicious tools. 
 
 ### Prompt Injection
 
 The [traditional malicious attack techniques](https://owasp.org/www-project-top-ten/) used against standard applications do not work in LLM-integrated applications, there are other techniques. Most successful prompt injections fool LLMs into interpreting the data payload as a question/prompt (also known as [prefixes](https://arxiv.org/abs/2307.02483)). 
-These prompt injection techniques could sophisticated--using LLMs to devise the correct malicious data and prompt to inject into an agent. Consider [Jatmo](https://arxiv.org/pdf/2312.17673), wherein the data fed is laced with a malicious prompt. In these techniques, an LLM-based malicious attacker will continue to send multiple prefixes appended by the test data until the agent is compromised. Even for agents backed by RAG-based LLM, [poisoning the backing vector databases](https://thesis.unipd.it/handle/20.500.12608/71090) is a challenge.
+These prompt injection techniques could sophisticated—using LLMs to devise the correct malicious data and prompt to inject into an agent. Consider [Jatmo](https://arxiv.org/pdf/2312.17673), wherein the data fed is laced with a malicious prompt. In these techniques, an LLM-based malicious attacker will continue to send multiple prefixes appended by the test data until the agent is compromised. Even for agents backed by RAG-based LLM, [poisoning the backing vector databases](https://thesis.unipd.it/handle/20.500.12608/71090) is a challenge.
 
-### Data Leakage
+### Malicious Tools and Data Leakage
+The other challenge would be malicious tools / agents.
+With the advent of MCP and A2A protocols, wherein agents decide their partner agents and tools at runtime in the future, it is easy for attackers to pose a malicious tool or agent as a legitimate one, thereby compromising security. For instance, an agent might upload sensitive data or perform payments using a malicious agent or tool. \
+As we saw earlier, MCP has made it easier for users and enterprises to externalize the tools, resources, and prompts, it also opens up a significant vulnerability in security. Since prompts could now get injected from outside into an agent, [ba tool that brings in data from an external source could also bring in malicious prompts](https://thehackernews.com/2025/04/experts-uncover-critical-mcp-and-a2a.html). This extends to agent-to-agent scenarios as well.\
+In A2A scenario, an agent could leak data or be forced to perform malicious activities using its tools or co-agents. Consider an agent accessing user information, including sensitive information such as PII, a person's schedule, etc., for a particular use case. The attacker could force the agent to reveal sensitive information about users, know about users' whereabouts, and more. Inherent challenges of LLMs, such as [hallucination and misunderstanding](https://arxiv.org/abs/2401.11817), exacerbate the problem—such errors lead agents to make unreliable and wrong decisions/actions. 
+### Model Stealing
+Model stealing is a huge problem in LLMs: any LLM or ML as a service is susceptible to model stealing attacks, [even when a model is secured behind a network](https://openaccess.thecvf.com/content/CVPR2022/html/Sanyal_Towards_Data-Free_Model_Stealing_in_a_Hard_Label_Setting_CVPR_2022_paper.html): a malicious attacker could use knowledge distillation. Treating the agent as a black box, the attacker sends a series of inputs, observes the outcomes, and trains a different model using these observations as training data. \
+*Though a huge problem in LLMs, we are not sure it is a significant problem in agents.* 
 
-> Model stealing is a huge problem in LLMs \
-> Any LLM or ML as a service is susceptible to model stealing attacks, [even when a model is secured behind a network](https://openaccess.thecvf.com/content/CVPR2022/html/Sanyal_Towards_Data-Free_Model_Stealing_in_a_Hard_Label_Setting_CVPR_2022_paper.html): a malicious attacker could use knowledge distillation. Treating the agent as a black box, the attacker sends a series of inputs, observes the outcomes, and trains a different model using these observations as training data. Though a huge problem in LLMs, we are not sure it is a problem in agents.
+### Few Approaches to Reucing Risk
 
 We recommend a few basic design decisions to help devise the agents securely, based on some of our learnings and implementations:
 In our current implementations, we explicitly separated an agent's data and prompt/instruction inputs. A great technique is to ensure the data received by LLM is [structured](https://arxiv.org/abs/2402.06363)—it is important to preprocess the data where possible. This avoids prompt injections and poisoning the core data and prompts.\
-Another approach, termed multi-agent shield, where a set of LLMs/SLMs critiques the agents' output. A variation of this approach (and a cheaper one) is to have a dedicated LLM/SLM acting as a filter to detect malicious queries before they are fed into the agent. 
+[Registration of agents and users](https://www.solo.io/blog/prevent-mcp-tool-poisoning-with-registration-workflow) is an option, thereby enabling tracing and non-repudiation. This approach proposes an *agent gateway* that registers and validates the source.
+[Another approach, termed multi-agent shield](https://arxiv.org/abs/2403.04783), where a set of LLMs/SLMs critiques the agents' output. A variation of this approach (and a cheaper one) is to have a dedicated LLM/SLM acting as a filter to detect malicious queries before they are fed into the agent. 
 
 ## Observability of Agents
 Similar to ML and LLM-based solutions, agentic solutions need monitoring, debugging, and operational oversight. This requirement becomes extremely important in multi-agent situations where the interactions cannot be known beforehand. Many techniques of monitoring and managing are proposed, varying from custom tooling to building special monitoring agents (which themselves are based on LLMs/SLMs).
@@ -173,7 +183,7 @@ In the CRM example, InsightBot plans a strategy to handle the lead. InsightBot m
 
 
 ### Level-4 Agents (NeuroBots) and Level-5 Agents (AGI)
-The agent implementations could get more complex and more autonomous. A level-4 agent could coordinate with multiple AI agents to optimize complex processes. A level-5 agent could execute operations with full autonomy--it could continuously adapt and self-optimize, handling complex interdependent business processes.
+The agent implementations could get more complex and more autonomous. A level-4 agent could coordinate with multiple AI agents to optimize complex processes. A level-5 agent could execute operations with full autonomy—it could continuously adapt and self-optimize, handling complex interdependent business processes.
 
 In the CRM example, a level-4 agent—a highly complex agent (or set of agents)—would work with sales and marketing teams, augmenting their lead-finding by learning and adopting. The agent(s) could learn about potential leads, plan lead generation with similar leads, handle nurturing, prepare proposals, and even close the deal. 
 
@@ -188,13 +198,13 @@ An interesting facet is analyzing the costs of various agent implementation patt
 
 
 ### Ethical Considerations and Responsible AI for Agents
-Implementing agents is a powerful option for many problems. However, there is a need to consider the ethical implications of such programs. The topic of responsibly and morally using AI for agents and similar solutions is a topic of enormous complexity--with no black and white solutions.
+Implementing agents is a powerful option for many problems. However, there is a need to consider the ethical implications of such programs. The topic of responsibly and morally using AI for agents and similar solutions is a topic of enormous complexity—with no black and white solutions.
 
 ### HAI / Collaboration
 A question of significant interest across the industry is how will humans collaborate with agents? What is the best way to augment existing personnel with agents? This could include building trust between humans and agents, building efficient communication channels (human to agent interfaces), and more. 
 
 ### Role of SLMs in Agent Ecosystems
-There conversation of using LLMs vs SLMs, small models targeted and trained to specific usecases, for agents is a field of enormous potential. Consider the company [Cohere](https://docs.cohere.com/v2/docs/models) that build specific models for SMBs (small-to-medium businesses), which shifted its business plan to move from building LLMs to SLMs and is now reasonably profitable. There are many advantages of using SLMs for routine operations: reducing cost, speed of inference, smaller infrastructure footprint, security--all good reasons SLMs might be a good option.
+There conversation of using LLMs vs SLMs, small models targeted and trained to specific usecases, for agents is a field of enormous potential. Consider the company [Cohere](https://docs.cohere.com/v2/docs/models) that build specific models for SMBs (small-to-medium businesses), which shifted its business plan to move from building LLMs to SLMs and is now reasonably profitable. There are many advantages of using SLMs for routine operations: reducing cost, speed of inference, smaller infrastructure footprint, security—all good reasons SLMs might be a good option.
 
 ### A2A Complexity
 We realize that multi-agent solutions (with A2A) are complicated. The inherent challenges in LLMs, such as hallucinations and lack of context, amplify many of the challenges of distributed computing (consensus problems, Byzantine faults, stabilization issues).
@@ -227,6 +237,10 @@ We will treat A2A in later blog posts.
     * [Security in Machine Learning: Exposing LLM Vulnerabilities through Poisoned Vector Databases in RAG-based System](https://thesis.unipd.it/handle/20.500.12608/71090) by Darybar
     * [A Survey on Trustworthy LLM Agents: Threats and Countermeasures by Yu et al](https://arxiv.org/abs/2503.09648)
     * [StruQ: Defending Against Prompt Injection with Structured Queries](https://arxiv.org/abs/2402.06363) by Chen, Piet, Sitawarin, Wagner
+    * [The Emerged Security and Privacy of LLM Agent: A Survey with Case Studies](https://arxiv.org/abs/2407.19354) by He, Feng et al
+    * [RTBAS: Defending LLM Agents Against Prompt Injection and Privacy Leakage](https://arxiv.org/abs/2502.08966) by Zhong et al
+    * [AutoDefense: Multi-Agent LLM Defense against Jailbreak Attacks](https://arxiv.org/abs/2403.04783) by Zeng et al
+    * [Hallucination is Inevitable: An Innate Limitation of Large Language Models](https://arxiv.org/abs/2401.11817) by Xu, Jain, and Kankanhalli
     
 **Organizational Projects and Initiatives:**
 
