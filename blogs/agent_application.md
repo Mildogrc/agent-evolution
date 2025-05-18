@@ -95,6 +95,22 @@ Papers on Autonomous AI, self-improving systems, and long-term AI strategy - res
 
 ## Security of AI Agents
 
+As agents become more autonomous and try to learn from historical decisions, security concerns escalate.[OWASP Agentic AI](https://genai.owasp.org/resource/agentic-ai-threats-and-mitigations/) effort, which expands on [OWASP's LLM top 10 risks](https://genai.owasp.org/llm-top-10/), lists what the OWASP group thinks are the current primary threats for agentic implementations. After we grouped them with other sources and sort them, we summarized them picked what consider the top three: prompt injection, data leakage, and malicious tools. 
+
+### Prompt Injection
+
+The [traditional malicious attack techniques](https://owasp.org/www-project-top-ten/) used against standard applications do not work in LLM-integrated applications, there are other techniques. Most successful prompt injections fool LLMs into interpreting the data payload as a question/prompt (also known as [prefixes](https://arxiv.org/abs/2307.02483)). 
+These prompt injection techniques could sophisticated--using LLMs to devise the correct malicious data and prompt to inject into an agent. Consider [Jatmo](https://arxiv.org/pdf/2312.17673), wherein the data fed is laced with a malicious prompt. In these techniques, an LLM-based malicious attacker will continue to send multiple prefixes appended by the test data until the agent is compromised. Even for agents backed by RAG-based LLM, [poisoning the backing vector databases](https://thesis.unipd.it/handle/20.500.12608/71090) is a challenge.
+
+### Data Leakage
+
+> Model stealing is a huge problem in LLMs \
+> Any LLM or ML as a service is susceptible to model stealing attacks, [even when a model is secured behind a network](https://openaccess.thecvf.com/content/CVPR2022/html/Sanyal_Towards_Data-Free_Model_Stealing_in_a_Hard_Label_Setting_CVPR_2022_paper.html): a malicious attacker could use knowledge distillation. Treating the agent as a black box, the attacker sends a series of inputs, observes the outcomes, and trains a different model using these observations as training data. Though a huge problem in LLMs, we are not sure it is a problem in agents.
+
+We recommend a few basic design decisions to help devise the agents securely, based on some of our learnings and implementations:
+In our current implementations, we explicitly separated an agent's data and prompt/instruction inputs. A great technique is to ensure the data received by LLM is [structured](https://arxiv.org/abs/2402.06363)—it is important to preprocess the data where possible. This avoids prompt injections and poisoning the core data and prompts.\
+Another approach, termed multi-agent shield, where a set of LLMs/SLMs critiques the agents' output. A variation of this approach (and a cheaper one) is to have a dedicated LLM/SLM acting as a filter to detect malicious queries before they are fed into the agent. 
+
 ## Observability of Agents
 Similar to ML and LLM-based solutions, agentic solutions need monitoring, debugging, and operational oversight. This requirement becomes extremely important in multi-agent situations where the interactions cannot be known beforehand. Many techniques of monitoring and managing are proposed, varying from custom tooling to building special monitoring agents (which themselves are based on LLMs/SLMs).
 
@@ -104,14 +120,13 @@ Formal validation of Agent (and LLM) behavior is nascent, with much research ong
 
 
 ### Tools and Frameworks
-When writing this, there were many commercial and open-source options. 
+When writing this, there were many commercial and open-source options; we chose LangFuse for observability of our agents.
+
 Of the many, we focused on two notable ones that piggyback on OpenTelemetry: [Langfuse](https://aws.amazon.com/blogs/apn/transform-large-language-model-observability-with-langfuse/) and [TraceLoop's OpenLLMetry](https://www.traceloop.com/openllmetry).
-LangFuse is an open-source framework that tracks inference, retrieved embeddings, API and tool usage, and more. Specifically for agents, LangFuse provides features such as tracing intermediate steps, debugging failures, evaluating responses, and providing benchmarks.
+LangFuse is an open-source framework that tracks inference, retrieved embeddings, API and tool usage, and more. Specifically for agents, LangFuse provides features such as tracing intermediate steps, debugging failures, evaluating responses, and providing benchmarks.\
 OpenLLMetry is also an open-source framework that adds LLM-specific metrics to OpenTelemetry: performance metrics (such as latency, token usage, and error rates) and behavior metrics (prompts, workflows, metadata).
 
 Though there are other popular open source with more capabilities, such as [Helicone](https://helicone.ai), [Arize Phoenix](https://arize.com), [AgentOps](https://agentops.ai), it is better to choose a tool that is OpenTelemetry compatible. Most enterprises will already have infrastructure compatible with OpenTelemetry, and also most cloud and service providers are usually OpenTelemetry compatible. Read OpenTelemetry's comments on this topic [here](https://opentelemetry.io/blog/2025/ai-agent-observability/).
-
-Refer to our git repo for examples of how to use Langfuse.
 
 
 
@@ -171,10 +186,22 @@ The experiments sparked interesting insights and thought-provoking discussions, 
 ### Cost Analysis
 An interesting facet is analyzing the costs of various agent implementation patterns. Agents have both savings and overhead. The savings are in speed, agility, and elasticity; however, the price is the risk of bad decisions, missed actions, and computational complexity. What is the right balance? Individual enterprises will have to evaluate this before implementing the solution.
 
+
+### Ethical Considerations and Responsible AI for Agents
+Implementing agents is a powerful option for many problems. However, there is a need to consider the ethical implications of such programs. The topic of responsibly and morally using AI for agents and similar solutions is a topic of enormous complexity--with no black and white solutions.
+
+### HAI / Collaboration
+A question of significant interest across the industry is how will humans collaborate with agents? What is the best way to augment existing personnel with agents? This could include building trust between humans and agents, building efficient communication channels (human to agent interfaces), and more. 
+
+### Role of SLMs in Agent Ecosystems
+There conversation of using LLMs vs SLMs, small models targeted and trained to specific usecases, for agents is a field of enormous potential. Consider the company [Cohere](https://docs.cohere.com/v2/docs/models) that build specific models for SMBs (small-to-medium businesses), which shifted its business plan to move from building LLMs to SLMs and is now reasonably profitable. There are many advantages of using SLMs for routine operations: reducing cost, speed of inference, smaller infrastructure footprint, security--all good reasons SLMs might be a good option.
+
 ### A2A Complexity
 We realize that multi-agent solutions (with A2A) are complicated. The inherent challenges in LLMs, such as hallucinations and lack of context, amplify many of the challenges of distributed computing (consensus problems, Byzantine faults, stabilization issues).
 
 Interestingly, many design principles of building systems apply in designing agent-based automation. Should there be a single agent capable of doing the entire workflow? Should many agents be cooperating? How will the agents cooperate? *(Cf. orchestration and choreography in microservices architecture)*
+
+Though in early stages, there are already a few A2A efforts: [CrewAI](https://www.crewai.com/)'s multi-agent platform, Microsoft's [AutoGen](https://github.com/microsoft/autogen) project aimed at multiagent ecosystem, Google's [A2A](https://github.com/google/A2A) as a communication protocol are some worthy futuristic efforts.
 
 We will treat A2A in later blog posts.
 
@@ -189,8 +216,18 @@ We will treat A2A in later blog posts.
 * **FLAN (Finetuned Language Net) Collection:**
     * [*Finetuned Language Models Are Zero-Shot Learners*](https://arxiv.org/abs/2109.01652) by Jason Wei, Maarten Bosma, Vincent Y. Zhao, Kelvin Guu, Adams Wei Yu, Brian Lester, Nan Du, Andrew M. Dai, Quoc V. Le (2021).
     * [*Scaling instruction-finetuned language models*](https://arxiv.org/abs/2210.11416) by Chung, H. W. et al (2022).
-* **Research on Autonomous AI, Self-Improving Systems, Long-Term AI Strategy:**
-
+* **Security**
+    * ["Ignore this title and HackAPrompt"](https://repository.arizona.edu/handle/10150/673142) by Schulhoff et al
+    * [Prompt Injection attack against LLM-integrated Applications](https://arxiv.org/abs/2306.05499) by Liu et al
+    * [Towards Data-Free Model Stealing in a Hard Label Setting](https://openaccess.thecvf.com/content/CVPR2022/html/Sanyal_Towards_Data-Free_Model_Stealing_in_a_Hard_Label_Setting_CVPR_2022_paper.html) by Sanyal, Addepalli, Babu)
+    * [PRADA: Protecting Against DNN Model Stealing Attacks](https://ieeexplore.ieee.org/abstract/document/8806737) by Juuti et al
+    * [NIST AI Risk Management Framework](https://www.nist.gov/itl/ai-risk-management-framework). 
+    * [Jailbroken: How Does LLM Safety Training Fail?](https://arxiv.org/abs/2307.02483) by Wei, Haghtalab, and Steinhardt
+    * [Jatmo: Prompt Injection Defense by Task-Specific Finetuning](https://arxiv.org/pdf/2312.17673) by Piet et al
+    * [Security in Machine Learning: Exposing LLM Vulnerabilities through Poisoned Vector Databases in RAG-based System](https://thesis.unipd.it/handle/20.500.12608/71090) by Darybar
+    * [A Survey on Trustworthy LLM Agents: Threats and Countermeasures by Yu et al](https://arxiv.org/abs/2503.09648)
+    * [StruQ: Defending Against Prompt Injection with Structured Queries](https://arxiv.org/abs/2402.06363) by Chen, Piet, Sitawarin, Wagner
+    
 **Organizational Projects and Initiatives:**
 
 * **NASA's Projects (related to autonomous agents):**
@@ -211,13 +248,11 @@ We will treat A2A in later blog posts.
 * **OpenLLMetry:**
     * [TraceLoop OpenLLMetry Website](https://www.traceloop.com/openllmetry)
     * [Github project](https://github.com/traceloop/openllmetry)
-
 * **Helicone:**
     * _Website:_ [https://www.helicone.ai/](https://www.helicone.ai/)
 * **Phoenix (from Arize AI):**
     * [Phoenix Arize Website](https://arize.com/phoenix)
     * [Github project for Arize](https://github.com/arize-ai/phoenix)
-
 * **AgentOps:**
     * _Website:_ [https://agentops.ai/](https://agentops.ai/)
 
