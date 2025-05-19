@@ -4,7 +4,7 @@ import datetime
 import keyring
 from hubspot.config import Config
 from hubspot.postgres_client import PostgresClient
-
+from langfuse.decorators import langfuse_context, observe
 
 class HubSpotTool():
     """Class to interact with the HubSpot API"""
@@ -15,8 +15,8 @@ class HubSpotTool():
         # Get configuration from config.py
         service_id = Config.hubspot["service_id"]
         access_token_key = Config.hubspot["access_token_key"]
-        db_user_key = Config.hubspot["db_user_key"]
-        db_password_key = Config.hubspot["db_password_key"]
+        db_user_key = Config.database["db_user_key"]
+        db_password_key = Config.database["db_password_key"]
 
         # Get HubSpot access token and database credentials from keyring
         self.hubspot_access_token = keyring.get_password(service_id, access_token_key)
@@ -44,6 +44,14 @@ class HubSpotTool():
         """Helper function to make API calls using Bearer Token"""
         access_token = self.hubspot_access_token
         print("Calling ", endpoint, " method ", method, " with payload \n", data)
+        span = langfuse_context.get_current_observation()
+        if span:
+            span.log(key="api_call_details", value={
+                "message": "Calling API",
+                "endpoint": endpoint,
+                "method": method,
+                "payload": data
+            })
 
         url = f"{self.BASE_URL}{endpoint}"
         headers = {
@@ -52,10 +60,21 @@ class HubSpotTool():
         }
 
         print(f"Making {method} request to {url}")
+        span = langfuse_context.get_current_observation()
+        if span:
+            span.log(key="http_request", value={
+                "message": f"Making {method} request to {url}"
+            })
         if params:
             print(f"Query parameters: {params}")
+            span = langfuse_context.get_current_observation()
+            if span:
+                span.log(key="query_parameters", value=params)
         if data:
             print(f"Request body: {json.dumps(data, indent=2)}")
+            span = langfuse_context.get_current_observation()
+            if span:
+                span.log(key="request_body", value=json.dumps(data, indent=2))
 
         try:
             if method == 'POST':
@@ -72,22 +91,40 @@ class HubSpotTool():
             response.raise_for_status()  # Raise an exception for bad status codes (4xx or 5xx)
 
             print(f"Response Status Code: {response.status_code}")
+            span = langfuse_context.get_current_observation()
+            if span:
+                span.log(key="response_status", value=response.status_code)
             # Attempt to parse JSON response if content exists
             if response.content:
                 try:
                     return response.json()
                 except json.JSONDecodeError:
                     print("Warning: Response was not JSON.")
+                    span = langfuse_context.get_current_observation()
+                    if span:
+                        span.log(key="json_decode_warning", value="Response was not JSON")
                     return response.text  # Return plain text if not JSON
             else:
                 print("Info: Response body is empty.")
+                span = langfuse_context.get_current_observation()
+                if span:
+                    span.log(key="empty_response_body", value="Response body is empty")
                 return None  # No content in response
 
         except requests.exceptions.RequestException as e:
             print(f"API Request failed: {e}")
+            span = langfuse_context.get_current_observation()
+            if span:
+                 span.log(key="api_request_failed", value=str(e), level="ERROR")
             if hasattr(e, 'response') and e.response is not None:
                 print(f"Status Code: {e.response.status_code}")
+                span = langfuse_context.get_current_observation()
+                if span:
+                    span.log(key="failed_response_status", value=e.response.status_code, level="ERROR")
                 print(f"Response Body: {e.response.text}")
+                span = langfuse_context.get_current_observation()
+                if span:
+                    span.log(key="failed_response_body", value=e.response.text, level="ERROR")
             return None
 
     def delete_lead(self, lead_id):
@@ -99,16 +136,40 @@ class HubSpotTool():
 
         # Example 1: Creating a new lead
         print("\n--- Creating a New Lead (Contact) using Private App Token ---")
+        span = langfuse_context.get_current_observation()
+        if span:
+            span.log(key="create_lead_start", value="Creating a New Lead (Contact) using Private App Token")
         print(f"Lead data received: {json.dumps(lead_data, indent=2)}")
+        span = langfuse_context.get_current_observation()
+        if span:
+            span.log(key="lead_data_received", value=json.dumps(lead_data, indent=2))
         """Create a new lead in HubSpot"""
         create_lead_endpoint = "/crm/v3/objects/contacts"
-        created_lead_response = self.call_hubspot_api_oauth('POST', create_lead_endpoint, data=lead_data)
+        
+        # Add Langfuse span for the API call
+        span = langfuse_context.get_current_observation()
+        if span:
+             with span.span(name="hubspot-api-create-lead", input=lead_data, metadata={"endpoint": create_lead_endpoint, "method": "POST"}) as api_span:
+                created_lead_response = self.call_hubspot_api_oauth('POST', create_lead_endpoint, data=lead_data)
+                api_span.update(output=created_lead_response)
+        else:
+             # If there's no active span, just call the API without tracing
+             created_lead_response = self.call_hubspot_api_oauth('POST', create_lead_endpoint, data=lead_data)
 
         if created_lead_response:
             print("Lead created successfully using Private App Token:")
+            span = langfuse_context.get_current_observation()
+            if span:
+                span.log(key="create_lead_success", value="Lead created successfully using Private App Token")
             print(json.dumps(created_lead_response, indent=2))
+            span = langfuse_context.get_current_observation()
+            if span:
+                span.log(key="created_lead_response", value=json.dumps(created_lead_response, indent=2))
             new_lead_id = created_lead_response.get('id')
             print(f"Newly created lead ID: {new_lead_id}")
+            span = langfuse_context.get_current_observation()
+            if span:
+                span.log(key="new_lead_id", value=new_lead_id)
 
             try:
                 # Store the lead in PostgreSQL if created successfully
@@ -117,18 +178,43 @@ class HubSpotTool():
                 return new_lead_id
         else:
             print("Failed to create lead using Private App Token.")
+            span = langfuse_context.get_current_observation()
+            if span:
+                span.log(key="create_lead_failed", value="Failed to create lead using Private App Token", level="ERROR")
             return None
 
     def update_lead(self, properties: json):
         lead_id = properties.get('lead_id')
         """Update an existing lead in HubSpot"""
         modify_lead_endpoint = f"/crm/v3/objects/contacts/{lead_id}"
-        return self.call_hubspot_api_oauth('PATCH', modify_lead_endpoint, data=properties)
+        # Get current span for logging within this method
+        span = langfuse_context.get_current_observation()
+        if span:
+            span.log(key="update_lead_start", value={
+                "message": "Updating Lead",
+                "lead_id": lead_id,
+                "properties": properties
+            })
+        response = self.call_hubspot_api_oauth('PATCH', modify_lead_endpoint, data=properties)
+        span = langfuse_context.get_current_observation()
+        if span:
+            span.log(key="update_lead_response", value=response)
+        return response
 
-    def create_meeting(self, meeting_data: dict):
+    def create_meeting(self, meeting_data: json):
         """Create a new meeting in HubSpot"""
         create_meeting_endpoint = "/crm/v3/objects/meetings"
+        # Get current span for logging within this method
+        span = langfuse_context.get_current_observation()
+        if span:
+             span.log(key="create_meeting_start", value={
+                 "message": "Creating Meeting",
+                 "meeting_data": meeting_data
+             })
         response = self.call_hubspot_api_oauth('POST', create_meeting_endpoint, data=meeting_data)
+        span = langfuse_context.get_current_observation()
+        if span:
+             span.log(key="create_meeting_response", value=response)
         meeting_id = response.get('meeting_id')
         lead_id = response.get('lead_id')
         if meeting_id:
@@ -139,13 +225,20 @@ class HubSpotTool():
                 start_time=meeting_data["properties"]["start_time"],
                 end_time=meeting_data["properties"]["end_time"]
             )
+            span = langfuse_context.get_current_observation()
+            if span:
+                span.log(key="meeting_stored_in_db", value={
+                    "meeting_id": meeting_id,
+                    "lead_id": lead_id,
+                    "db_id": db_meeting_id
+                })
 
         return response
 
-
 hstool = HubSpotTool()
-
-
-def create_lead(json_payload: dict):
+def create_lead(json_payload:dict):
     print('Agent called "create_lead()"')
+    span = langfuse_context.get_current_observation()
+    if span:
+        span.log(key="agent_create_lead_called", value="Agent called create_lead()")
     return hstool.create_lead(json_payload)

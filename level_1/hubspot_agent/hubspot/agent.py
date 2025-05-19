@@ -1,14 +1,11 @@
 from hubspot.hubspot_tool import create_lead
 from google.adk.agents import Agent
+from hubspot.langfuse_config import get_langfuse_client
 
-root_agent = Agent(
-    name="hubspot_agent",
-    model="gemini-2.0-flash",
-    description=(
-        "Agent to manage leads in HubSpot"
-    ),
-    instruction=(
-        """
+# Initialize Langfuse client
+langfuse = get_langfuse_client()
+
+system_prompt = """
         You are a HubSpot Agent designed to help administrators create and manage leads, and setup meetings with
         potential leads.
         
@@ -46,6 +43,13 @@ root_agent = Agent(
         
         Always think step-by-step about the most efficient and secure way to fulfill user requests.
         """
+
+root_agent = Agent(
+    name="hubspot_agent",
+    model="gemini-2.0-flash",
+    description=(
+        "Agent to manage leads in HubSpot"
     ),
+    instruction=(system_prompt),
     tools=[create_lead]
 )

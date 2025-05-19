@@ -1,8 +1,7 @@
 google-adk
+google.adk
 google-search-results
 keyring
 psycopg2
-requests
-json
-datetime
-getpass
+langfuse>=2.0.0
+pydantic[email]

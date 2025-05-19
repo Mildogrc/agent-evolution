@@ -1,4 +1,5 @@
 
+
 # !/usr/bin/env python3
 """
 Setup script to initialize keyring with necessary credentials
@@ -40,8 +41,8 @@ class Setup:
         db_password = getpass.getpass("Enter database password: ")
 
         # Store credentials in keyring
-        keyring.set_password(service_id, Config.hubspot["db_user_key"], db_user)
-        keyring.set_password(service_id, Config.hubspot["db_password_key"], db_password)
+        keyring.set_password(service_id, Config.database["db_user_key"], db_user)
+        keyring.set_password(service_id, Config.database["db_password_key"], db_password)
 
         print("\nCredentials stored successfully!")
         print("You can now run the main program.")
@@ -57,13 +58,13 @@ class Setup:
             return False, "HubSpot access token not found"
 
         # Test database credentials
-        db_user = keyring.get_password(service_id, Config.hubspot["db_user_key"])
+        db_user = keyring.get_password(service_id, Config.database["db_user_key"])
         if not db_user:
             return False, "Database username not found"
         # else:
         #     print(db_user)
 
-        db_password = keyring.get_password(service_id, Config.hubspot["db_password_key"])
+        db_password = keyring.get_password(service_id, Config.database["db_password_key"])
         if not db_password:
             return False, "Database password not found"
 

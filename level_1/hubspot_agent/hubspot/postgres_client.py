@@ -57,7 +57,7 @@ class PostgresClient:
         """Store a new lead in the database"""
         conn = self.conn_pool.getconn()
         email = lead_data['properties']['email']
-        firstname = lead_data['properties'].get('firstname')  # Use .get for optional fields
+        firstname = lead_data['properties'].get('firstname') # Use .get for optional fields
         lastname = lead_data['properties'].get('lastname')
         phone = lead_data['properties'].get('phone')
         try:
