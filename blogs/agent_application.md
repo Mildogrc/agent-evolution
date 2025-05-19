@@ -38,14 +38,14 @@ Significant advancements in AI have occurred in the past four years, and their i
 
 ## The Coming of AI Agents
 
-> For the topic of this discussion: The term *agents*, along with the terms *autonomous agents*, or *AI agents*, refers to standalone decision-making system that leverages LLMs. 
+> For the topic of this discussion: The term *agents*, along with the terms *autonomous agents*, or *AI agents*, refers to standalone decision-making system that leverages LLMs.
 
  Initially, LLMs were pattern matchers that learned the statistical relevance between words and chatbots that generated coherent volumes of textual responses. The emergence of LLMs as drivers of autonomous agents was due to advancements of LLMs in: 1/ stronger reasoning, 2/ instruction following, 3/ tool-use rationale, and 4/ code-generation. These changes were brought about in LLMs as a [series of improvements](https://arxiv.org/abs/2206.07682) with techniques such as:
 
-- [Scaling up models]( https://arxiv.org/abs/2005.14165) enabled capabilities beyond pattern-matching
-- *[Transformers (attention mechanism)](https://arxiv.org/abs/1706.03762)* that allowed LLMs to capture long-range dependencies
-- instruction tuning with high-quality reasoning Q&As *cf.* [FLAN collection](https://research.google/blog/google-research-2022-beyond-language-vision-and-generative-models/) 
-- [Chain-of-Thought (CoT) prompting](https://arxiv.org/abs/2201.11903) that shows steps before answering.
+* [Scaling up models]( https://arxiv.org/abs/2005.14165) enabled capabilities beyond pattern-matching
+* *[Transformers (attention mechanism)](https://arxiv.org/abs/1706.03762)* that allowed LLMs to capture long-range dependencies
+* instruction tuning with high-quality reasoning Q&As *cf.* [FLAN collection](https://research.google/blog/google-research-2022-beyond-language-vision-and-generative-models/)
+* [Chain-of-Thought (CoT) prompting](https://arxiv.org/abs/2201.11903) that shows steps before answering.
 
 This series of write-ups is an attempt to capture our experiments with developing agents: tools, techniques, challenges, and best practices.
 
@@ -59,14 +59,14 @@ Our POV is that the agents can perform significant operations autonomously. Furt
 
 ### Techniques of Agent Implementations
 
-So far, engineers have envisioned a few different ways of building agents; let us look at the four most popular techniques. A typical implementation involves [tool-calling libraries](https://python.langchain.com/v0.1/docs/modules/agents/concepts/) that orchestrate operations using an LLM and APIs (for example, using [langchain](https://python.langchain.com/docs), an LLM itself invoking tools or APIs (for instance, [Amazon Bedrock](https://aws.amazon.com/blogs/machine-learning/harness-the-power-of-mcp-servers-with-amazon-bedrock-agents/) or any such agents that use [MCP](https://docs.anthropic.com/en/docs/agents-and-tools/mcp)), and [multi-agents](https://cloud.google.com/discover/what-are-ai-agents), where many LLM-based or SLM-based agents interacting with each other (for instance, using [A2A](https://developers.googleblog.com/en/a2a-a-new-era-of-agent-interoperability/).) 
+So far, engineers have envisioned a few different ways of building agents; let us look at the four most popular techniques. A typical implementation involves [tool-calling libraries](https://python.langchain.com/v0.1/docs/modules/agents/concepts/) that orchestrate operations using an LLM and APIs (for example, using [langchain](https://python.langchain.com/docs), an LLM itself invoking tools or APIs (for instance, [Amazon Bedrock](https://aws.amazon.com/blogs/machine-learning/harness-the-power-of-mcp-servers-with-amazon-bedrock-agents/) or any such agents that use [MCP](https://docs.anthropic.com/en/docs/agents-and-tools/mcp)), and [multi-agents](https://cloud.google.com/discover/what-are-ai-agents), where many LLM-based or SLM-based agents interacting with each other (for instance, using [A2A](https://developers.googleblog.com/en/a2a-a-new-era-of-agent-interoperability/).)
 
 ----
 ![Agent Deployments](images/agent_deploys.png)
 
 ----
 
-The above diagram conceptually depicts the four most common patterns of agent deployment. 
+The above diagram conceptually depicts the four most common patterns of agent deployment.
 
 > The diagram is a conceptual simplification. The agent framework/orchestrator still exists in scenarios 2, 3, and 4; remember that LLMs are reasoning engines, not execution environments.
 
@@ -81,21 +81,21 @@ In this setup, the LLM drives the agent's functionality. The LLM uses reasoning 
 #### LLM with MCP
 
 [*"The Model Context Protocol (MCP) is an open standard that facilitates seamless integration between LLM applications and external data sources or tools."*](https://modelcontextprotocol.io/specification/2025-03-26/index)
-In this fully integrated vision, every enterprise asset is already MCP-enabled and exposes an MCP endpoint. LLM can now discover these MCP endpoints and use the relevant enterprise assets to execute the required use cases. 
+In this fully integrated vision, every enterprise asset is already MCP-enabled and exposes an MCP endpoint. LLM can now discover these MCP endpoints and use the relevant enterprise assets to execute the required use cases.
 
 #### LLMs with MCP Server
 
-This is a middle-ground implementation in which an MCP server, similar to an API gateway, exposes MCP endpoints, abstracting the complex integrations behind the server. 
+This is a middle-ground implementation in which an MCP server, similar to an API gateway, exposes MCP endpoints, abstracting the complex integrations behind the server.
 
 ### Comparison of Approaches
 
 #### Our Observations
 
 * **Control vs Flexibility**
-  * When LLM uses tool directly, we observed that if LLM is given an example dataset, LLM can easily identify the right content to send to the tool. 
+  * When LLM uses tool directly, we observed that if LLM is given an example dataset, LLM can easily identify the right content to send to the tool.
   * Though the LLM capability gives more control to embed the tool directly, architecturally it does not appear clean. Adding MCP adds a level of indirection and necessary abstraction.
   * Google ADK is easier to install and run, and automatically comes with a runner that allows a web interface to chat with the agent.
-  * LangChain enforces certain constraints in developing the agent; this allows a little more *'compile-time validation'*, making it easier to build the agent correctly. 
+  * LangChain enforces certain constraints in developing the agent; this allows a little more *'compile-time validation'*, making it easier to build the agent correctly.
 
 * **Development Complexity**
   * We observed that developing MCP is not straightforward. The releases are still new (version 0.x), and when used with FastAPI, run into version incompatibility challenges. It took many attempts trying different versions to find the compatible library (refer to requirements.txt)
@@ -150,61 +150,57 @@ OpenLLMetry is also an open-source framework that adds LLM-specific metrics to O
 
 Though there are other popular open source with more capabilities, such as [Helicone](https://helicone.ai), [Arize Phoenix](https://arize.com), [AgentOps](https://agentops.ai), it is better to choose a tool that is OpenTelemetry compatible. Most enterprises will already have infrastructure compatible with OpenTelemetry, and also most cloud and service providers are usually OpenTelemetry compatible. Read OpenTelemetry's comments on this topic [here](https://opentelemetry.io/blog/2025/ai-agent-observability/).
 
-
 ## An Illustrative Example: CRM Automation Agent
 
-For the past two months, we have been working on a rudimentary implementation, which involved building CRM agents and demonstrating their capabilities. We chose to implement agents that can *manage customer relations* to demonstrate the possibilities of implementing increasingly complex agents. The toolset we chose was Python, Google ADK, Langchain, Ollama, Llama2/Gemma/Gemini-Flash. The CRM solution was HubSpot. 
+For the past two months, we have been working on a rudimentary implementation, which involved building CRM agents and demonstrating their capabilities. We chose to implement agents that can *manage customer relations* to demonstrate the possibilities of implementing increasingly complex agents. The toolset we chose was Python, Google ADK, Langchain, Ollama, Llama2/Gemma/Gemini-Flash. The CRM solution was HubSpot.
 
 > **Rules of the universe:** \
 > *No pictures = it didn't happen* \
 > *No working code = it doesn't matter*
-
 
 ### HubSpot Taskbot - Level-1 Agents
 
 As part of building a Level-1 agent (which we term `taskbots`), we built a CRM client agent. TaskBots aim to automate simple, rule-based tasks. Employing LLMs or SLMs to leverage targeted features like language understanding, conversational ability, and content generation to achieve repetitive workflows with minimal decision-making.
 
 The idea was that an agent could look at emails from clients (or potential clients), automatically extract the relevant information, and update the CRM. Our efforts are in [this GitHub repo](https://github.com/Mildogrc/agent-evolution/). An outline of our implementation efforts is this:
+
 1. We built code that is capable of creating and managing leads. We exposed two Python functions, `create_lead()`, to create a new lead in HubSpot, and `create_meeting()`, to set up a meeting with the new lead. These functions took the necessary information in a key-value format `{email:"<>", firstname:"", lastname:""...}`
 2. We wrote an agent prompt asking it to parse an email from a potential lead, find the relevant data, and call the tooling to create an entry in HubSpot. After that it creates an entry in a local Postgres database with <`lead-id`, `user-name`, `user-email`> for future reference
 
-We have two different implementations of Level-1 Agents: 
-1. A Google ADK-based implementation that directly discovers and uses tools to create a lead based on emails, and 
-2. an agent implementation that uses the same tool-calling via an MCP server.
+We have two different implementations of Level-1 Agents:
 
----
+1. A Google ADK-based implementation that directly discovers and uses tools to create a lead based on emails, and
+2. A LangChain-based agent implementation that uses the same tool-calling via an MCP server.
+
+----
 
 | Level-1 Agent with direct tool-calling                                 | Level-1 Agent that uses MCP |
 |------------------------------------------------------------------------|---|
-| <img src="images/hstool1.png" alt="Agent + Tool-calling" width="600"/> | <img src="images/hstool2.png" alt="Agent + MCP Server" width="600"/> |
+| ![Agent with direct tool-calling](images/hstool1.png) | ![Agent that uses MCP](images/hstool2.png) |
 
----
+----
 
-### HubSpot FlowBot - Level-2 Agent 
+### HubSpot FlowBot - Level-2 Agent
 
-A FlowBot improves upon a TaskBot by implementing a multistep flow. 
+A FlowBot improves upon a TaskBot by implementing a multistep flow.
 
 In the CRM example, a FlowBot, besides entering the lead, also works to find a good time on the lead's calendar for further steps (discussion, demo, or any such encounter). We could add more steps to a FlowBot's workflow, increasing its complexity. For instance, the flowbot could use tools to gather more data and insights about the client and update the CRM. It could transcribe the calls and add the details and sentiment of the call to the CRM software.
 
-
 ### HubSpot InsightBot - Level-3 Agent
 
-InsightBots augment and list the potential paths with insights based on real-time findings. 
+InsightBots augment and list the potential paths with insights based on real-time findings.
 
-In the CRM example, InsightBot plans a strategy to handle the lead. InsightBot might look at the leads holistically, do a background check, and devise the best way to handle them. Then, InsightBot prompts an approver to determine whether the plan needs changes or is good to execute. Once a human/admin finalizes the plan, InsightBot will manage it. 
+In the CRM example, InsightBot plans a strategy to handle the lead. InsightBot might look at the leads holistically, do a background check, and devise the best way to handle them. Then, InsightBot prompts an approver to determine whether the plan needs changes or is good to execute. Once a human/admin finalizes the plan, InsightBot will manage it.
 
 > Considering the complex nature of a level-3 agent, and our limited resources with a constrained timeframe, this represents an ambitious undertaking and a significant stretch goal for us.
-
 
 ### Level-4 Agents (NeuroBots) and Level-5 Agents (AGI)
 
 The agent implementations could get more complex and more autonomous. A level-4 agent could coordinate with multiple AI agents to optimize complex processes. A level-5 agent could execute operations with full autonomy—it could continuously adapt and self-optimize, handling complex interdependent business processes.
 
-In the CRM example, a level-4 agent—a highly complex agent (or set of agents)—would work with sales and marketing teams, augmenting their lead-finding by learning and adopting. The agent(s) could learn about potential leads, plan lead generation with similar leads, handle nurturing, prepare proposals, and even close the deal. 
+In the CRM example, a level-4 agent—a highly complex agent (or set of agents)—would work with sales and marketing teams, augmenting their lead-finding by learning and adopting. The agent(s) could learn about potential leads, plan lead generation with similar leads, handle nurturing, prepare proposals, and even close the deal.
 
 A level-5 agent, a theoretical AGI, would be fully autonomous. They would handle everything from creating marketing campaigns to finding leads, contacting them, planning a strategy, scheduling meetings, demoing the products or services, and attempting to make a sale. They could even handle customer support.
-
-
 
 ## Further Topics to Explore
 
@@ -214,14 +210,13 @@ The experiments sparked interesting insights and thought-provoking discussions, 
 
 An interesting facet is analyzing the costs of various agent implementation patterns. Agents have both savings and overhead. The savings are in speed, agility, and elasticity; however, the price is the risk of bad decisions, missed actions, and computational complexity. What is the right balance? Individual enterprises will have to evaluate this before implementing the solution.
 
-
 ### Ethical Considerations and Responsible AI for Agents
 
 Implementing agents is a powerful option for many problems. However, there is a need to consider the ethical implications of such programs. The topic of responsibly and morally using AI for agents and similar solutions is a topic of enormous complexity—with no black and white solutions.
 
 ### HAI / Collaboration
 
-A question of significant interest across the industry is how will humans collaborate with agents? What is the best way to augment existing personnel with agents? This could include building trust between humans and agents, building efficient communication channels (human to agent interfaces), and more. 
+A question of significant interest across the industry is how will humans collaborate with agents? What is the best way to augment existing personnel with agents? This could include building trust between humans and agents, building efficient communication channels (human to agent interfaces), and more.
 
 ### Role of SLMs in Agent Ecosystems
 
@@ -245,51 +240,51 @@ We will treat A2A in later write-ups.
 
 * [*Modeling Adaptive Autonomous Agents*](https://direct.mit.edu/artl/article-abstract/1/1_2/135/2256/Modeling-Adaptive-Autonomous-Agents) by Pattie Maes (1993)
 * **FLAN (Finetuned Language Net) Collection:**
-    * [*Finetuned Language Models Are Zero-Shot Learners*](https://arxiv.org/abs/2109.01652) by Jason Wei, Maarten Bosma, Vincent Y. Zhao, Kelvin Guu, Adams Wei Yu, Brian Lester, Nan Du, Andrew M. Dai, Quoc V. Le (2021).
-    * [*Scaling instruction-finetuned language models*](https://arxiv.org/abs/2210.11416) by Chung, H. W. et al (2022).
+  * [*Finetuned Language Models Are Zero-Shot Learners*](https://arxiv.org/abs/2109.01652) by Jason Wei, Maarten Bosma, Vincent Y. Zhao, Kelvin Guu, Adams Wei Yu, Brian Lester, Nan Du, Andrew M. Dai, Quoc V. Le (2021).
+  * [*Scaling instruction-finetuned language models*](https://arxiv.org/abs/2210.11416) by Chung, H. W. et al (2022).
 * **Security**
-    * ["Ignore this title and HackAPrompt"](https://repository.arizona.edu/handle/10150/673142) by Schulhoff et al
-    * [Prompt Injection attack against LLM-integrated Applications](https://arxiv.org/abs/2306.05499) by Liu et al
-    * [Towards Data-Free Model Stealing in a Hard Label Setting](https://openaccess.thecvf.com/content/CVPR2022/html/Sanyal_Towards_Data-Free_Model_Stealing_in_a_Hard_Label_Setting_CVPR_2022_paper.html) by Sanyal, Addepalli, Babu)
-    * [PRADA: Protecting Against DNN Model Stealing Attacks](https://ieeexplore.ieee.org/abstract/document/8806737) by Juuti et al
-    * [NIST AI Risk Management Framework](https://www.nist.gov/itl/ai-risk-management-framework). 
-    * [Jailbroken: How Does LLM Safety Training Fail?](https://arxiv.org/abs/2307.02483) by Wei, Haghtalab, and Steinhardt
-    * [Jatmo: Prompt Injection Defense by Task-Specific Finetuning](https://arxiv.org/pdf/2312.17673) by Piet et al
-    * [Security in Machine Learning: Exposing LLM Vulnerabilities through Poisoned Vector Databases in RAG-based System](https://thesis.unipd.it/handle/20.500.12608/71090) by Darybar
-    * [A Survey on Trustworthy LLM Agents: Threats and Countermeasures by Yu et al](https://arxiv.org/abs/2503.09648)
-    * [StruQ: Defending Against Prompt Injection with Structured Queries](https://arxiv.org/abs/2402.06363) by Chen, Piet, Sitawarin, Wagner
-    * [The Emerged Security and Privacy of LLM Agent: A Survey with Case Studies](https://arxiv.org/abs/2407.19354) by He, Feng et al
-    * [RTBAS: Defending LLM Agents Against Prompt Injection and Privacy Leakage](https://arxiv.org/abs/2502.08966) by Zhong et al
-    * [AutoDefense: Multi-Agent LLM Defense against Jailbreak Attacks](https://arxiv.org/abs/2403.04783) by Zeng et al
-    * [Hallucination is Inevitable: An Innate Limitation of Large Language Models](https://arxiv.org/abs/2401.11817) by Xu, Jain, and Kankanhalli
-    
+  * ["Ignore this title and HackAPrompt"](https://repository.arizona.edu/handle/10150/673142) by Schulhoff et al
+  * [Prompt Injection attack against LLM-integrated Applications](https://arxiv.org/abs/2306.05499) by Liu et al
+  * [Towards Data-Free Model Stealing in a Hard Label Setting](https://openaccess.thecvf.com/content/CVPR2022/html/Sanyal_Towards_Data-Free_Model_Stealing_in_a_Hard_Label_Setting_CVPR_2022_paper.html) by Sanyal, Addepalli, Babu)
+  * [PRADA: Protecting Against DNN Model Stealing Attacks](https://ieeexplore.ieee.org/abstract/document/8806737) by Juuti et al
+  * [NIST AI Risk Management Framework](https://www.nist.gov/itl/ai-risk-management-framework).
+  * [Jailbroken: How Does LLM Safety Training Fail?](https://arxiv.org/abs/2307.02483) by Wei, Haghtalab, and Steinhardt
+  * [Jatmo: Prompt Injection Defense by Task-Specific Finetuning](https://arxiv.org/pdf/2312.17673) by Piet et al
+  * [Security in Machine Learning: Exposing LLM Vulnerabilities through Poisoned Vector Databases in RAG-based System](https://thesis.unipd.it/handle/20.500.12608/71090) by Darybar
+  * [A Survey on Trustworthy LLM Agents: Threats and Countermeasures by Yu et al](https://arxiv.org/abs/2503.09648)
+  * [StruQ: Defending Against Prompt Injection with Structured Queries](https://arxiv.org/abs/2402.06363) by Chen, Piet, Sitawarin, Wagner
+  * [The Emerged Security and Privacy of LLM Agent: A Survey with Case Studies](https://arxiv.org/abs/2407.19354) by He, Feng et al
+  * [RTBAS: Defending LLM Agents Against Prompt Injection and Privacy Leakage](https://arxiv.org/abs/2502.08966) by Zhong et al
+  * [AutoDefense: Multi-Agent LLM Defense against Jailbreak Attacks](https://arxiv.org/abs/2403.04783) by Zeng et al
+  * [Hallucination is Inevitable: An Innate Limitation of Large Language Models](https://arxiv.org/abs/2401.11817) by Xu, Jain, and Kankanhalli
+
 **Organizational Projects and Initiatives:**
 
 * **NASA's Projects (related to autonomous agents):**
-    * [Remote Agent: To Boldly Go Where No AI System Has
+  * [Remote Agent: To Boldly Go Where No AI System Has
  Gone Before](http://www.ai.mit.edu/courses/6.834J-f01/Williams-remote-agent-aij98.pdf) by  Nicola Muscettola, P. Pandurang Nayak, Barney Pell, Brian C. Williams (1998)
 * **DARPA's Work (Explainable AI, Interpretable RL):**
-    *  *[DARPA’s explainable artificial intelligence (XAI) program](https://ojs.aaai.org/aimagazine/index.php/aimagazine/article/download/2850/3419)* by Gunning, David, and David Aha. AI magazine 40.2 (2019): 44-58.
+  * *[DARPA’s explainable artificial intelligence (XAI) program](https://ojs.aaai.org/aimagazine/index.php/aimagazine/article/download/2850/3419)* by Gunning, David, and David Aha. AI magazine 40.2 (2019): 44-58.
 
 **Tools, Frameworks, and Standards (Documentation/Websites):**
-* **Agent Frameworks**
-    * [_Google ADK_](https://google.github.io/adk-docs), Googles's open-source framework for agent development.
-    * [_LangChain_](https://python.langchain.com/docs/get_started/introduction), composable framework to build with LLMs and more.
-* **LLMs**
-    * [_Ollama_](https://ollama.ai/) to run LLMs locally
-    * [_Llama2_](https://ai.meta.com/llama/), a collection of open-source models by Meta
-    * [_Gemma_](https://ai.google.dev/gemma), a lightweight model collection by Google
-    * [_Gemini-Flash_](https://deepmind.google/technologies/gemini/flash/), a family of LLMs hosted on Google infrastructure
-* **Specifications:**
-    * [_MCP Specification_](https://modelcontextprotocol.io/specification/2025-03-26) by Anthropic, a standard for agent-to-tool communication
-* **Observability:**
-    * [_OpenTelemetry Website_](https://opentelemetry.io/)
-    * [_Agent Blog by OpenTelementry_](https://opentelemetry.io/blog/2025/ai-agent-observability/)
-    * [_LangFuse Website_](https://langfuse.com/)
-    * [_TraceLoop OpenLLMetry Website_](https://www.traceloop.com/openllmetry)
-    * [_TraceLoop Github project_](https://github.com/traceloop/openllmetry)
-    * [_Helicone Website_](https://www.helicone.ai/)
-    * [_Phoenix Arize Website_](https://arize.com/phoenix)
-    * [_Github project for Arize_](https://github.com/arize-ai/phoenix)
-    * [_AgentOps Website_](https://agentops.ai/)
 
+* **Agent Frameworks**
+  * [*Google ADK*](https://google.github.io/adk-docs), Googles's open-source framework for agent development.
+  * [*LangChain*](https://python.langchain.com/docs/get_started/introduction), composable framework to build with LLMs and more.
+* **LLMs**
+  * [*Ollama*](https://ollama.ai/) to run LLMs locally
+  * [*Llama2*](https://ai.meta.com/llama/), a collection of open-source models by Meta
+  * [*Gemma*](https://ai.google.dev/gemma), a lightweight model collection by Google
+  * [*Gemini-Flash*](https://deepmind.google/technologies/gemini/flash/), a family of LLMs hosted on Google infrastructure
+* **Specifications:**
+  * [*MCP Specification*](https://modelcontextprotocol.io/specification/2025-03-26) by Anthropic, a standard for agent-to-tool communication
+* **Observability:**
+  * [*OpenTelemetry Website*](https://opentelemetry.io/)
+  * [*Agent Blog by OpenTelementry*](https://opentelemetry.io/blog/2025/ai-agent-observability/)
+  * [*LangFuse Website*](https://langfuse.com/)
+  * [*TraceLoop OpenLLMetry Website*](https://www.traceloop.com/openllmetry)
+  * [*TraceLoop Github project*](https://github.com/traceloop/openllmetry)
+  * [*Helicone Website*](https://www.helicone.ai/)
+  * [*Phoenix Arize Website*](https://arize.com/phoenix)
+  * [*Github project for Arize*](https://github.com/arize-ai/phoenix)
+  * [*AgentOps Website*](https://agentops.ai/)
