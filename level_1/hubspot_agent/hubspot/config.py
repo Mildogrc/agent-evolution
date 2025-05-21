@@ -5,7 +5,7 @@ class Config:
     def __init__(self):
             pass
    
-    load_dotenv(dotenv_path='.env')
+    load_dotenv(dotenv_path='../../.env')
    
     gcp_project = os.getenv("GOOGLE_PROJECT")
     db_name = os.getenv("POSTGRES_DB")

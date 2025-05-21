@@ -36,6 +36,8 @@ class EmailContent(BaseModel):
     body: str = Field(..., example="Hello team, here's an update...", description="Main content/body of the email.")
     received_at: Optional[datetime.datetime] = Field(None, example="2024-05-18T14:30:00Z", description="Timestamp when the email was received.")
     message_id: Optional[str] = Field(None, example="<unique-message-id@mail.example.com>", description="Unique identifier for the email message.")
+    session_id: Optional[str] = Field(None, example="<session-id@mail.example.com>", description="Unique identifier for the email session.")
+    user_id: str = Field(..., example="user123", description="Unique identifier for the user.")
 
     class Config:
         # This allows FastAPI to show example values in the documentation
@@ -46,14 +48,15 @@ class EmailContent(BaseModel):
                 "subject": "Inquiry about product X",
                 "body": "Dear Support Team,\n\nI have a question regarding product X. Could you please provide more details on its features?\n\nThanks,\nJane",
                 "received_at": "2024-05-18T10:00:00Z",
-                "message_id": "<somerandomid123@mail.example.com>"
+                "message_id": "<somerandomid123@mail.example.com>",
+                "session_id": "<somerandomid123@mail.example.com>",
+                "user_id": "user123"
             }
         }
-
-# Initialize ADK App with your root agent
-# Ensure root_agent is correctly defined and imported
+        
 try:
     adk_app = AdkApp(agent=root_agent)
+    print("ADK Agent started!")
 except Exception as e:
     print(f"Error initializing AdkApp with root_agent: {e}")
     # Handle this critical error appropriately, as the app won't function
@@ -61,40 +64,65 @@ except Exception as e:
 
 
 
-@app.post("/chat")
-async def chat_with_agent(query: str):
-
-    session = adk_app.create_session()
-    response_events = []
-    async for event in session.execute(input={"message": query}):
-        response_events.append(event)
-        if event.name == "agent:llm:final_response": 
-            return {"response": event.data.get("text")}
-    return {"response_events": response_events} # Fallback
-
 
 # --- New Endpoint for Processing Email Content ---
 @app.post("/process-email", tags=["Agent Interaction"])
 async def process_email_with_agent(email_data: EmailContent):
+    print('Processing: ', email_data)
     if not adk_app:
         raise HTTPException(status_code=500, detail="ADK Application not initialized.")
 
     try:
-        session = adk_app.create_session() # Consider if session management is needed per email or per sender
-        response_events = []
-        final_text_response = None
+        # Use provided session_id if available, otherwise create new session
+        session = adk_app.create_session(user_id=email_data.sender, session_id=email_data.session_id)
+        print(f"Sending to agent (session {session}): {email_data.body}")
 
-        async for event in session.execute(input={"message": system_prompt}):
-            response_events.append(event.model_dump_json()) # Storing JSON serializable event data
-            if event.name == "agent:llm:final_response":
-                final_text_response = event.data.get("text")
-                return {
-                    "status": "Email processed",
-                    "agent_response": final_text_response,
-                    "original_subject": email_data.subject,
-                    "original_sender": email_data.sender,
-                    "session_id": session.session_id
-                }
+        
+
+        full_response_text = ""
+        final_response_event_data = None
+        
+        async for event in adk_app.stream_query(message=email_data.body, user_id=email_data.sender, session=session):
+            print(f"Received event: {event.name}, Data: {event.data}") # Log all events for debugging
+
+            if event.name == "agent:llm:chunk": # Streaming text from the LLM
+                if "text" in event.data:
+                    chunk_text = event.data["text"]
+                    print(chunk_text, end="", flush=True) # Print chunks as they arrive
+                    full_response_text += chunk_text
+            elif event.name == "agent:llm:final_response": # A consolidated final response from the LLM
+                if "text" in event.data:
+                    # If we haven't built up text from chunks, use this
+                    if not full_response_text:
+                        full_response_text = event.data["text"]
+                    final_response_event_data = event.data # Store the whole final response data
+                    print(f"\nFinal response event data: {final_response_event_data}") # Newline after chunks
+                break # Often, the final_response event is the last one you need for the text output
+            elif event.name == "agent:error":
+                print(f"\nAgent error: {event.data.get('message')}")
+                # Handle error appropriately
+                return f"Agent error: {event.data.get('message')}"
+            # You can handle other event types here (e.g., tool calls) if needed
+
+
+        # session = adk_app.create_session(
+        #     user_id=email_data.user_id,
+        #     session_id=email_data.session_id
+        # ) if hasattr(email_data, 'session_id') and email_data.session_id else adk_app.create_session(user_id=email_data.user_id)
+        # response_events = []
+        # final_text_response = None
+
+        # async for event in session.chat(input={"message": system_prompt}):
+        #     response_events.append(event.model_dump_json()) # Storing JSON serializable event data
+        #     if event.name == "agent:llm:final_response":
+        #         final_text_response = event.data.get("text")
+        #         return {
+        #             "status": "Email processed",
+        #             "agent_response": final_text_response,
+        #             "original_subject": email_data.subject,
+        #             "original_sender": email_data.sender,
+        #             "session_id": session.session_id
+        #         }
         
         # Fallback if no 'agent:llm:final_response' event with text was found
         # This logic mirrors the /chat endpoint's fallback
