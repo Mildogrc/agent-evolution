@@ -5,7 +5,7 @@ from hubspot.langfuse_config import get_langfuse_client
 # Initialize Langfuse client
 langfuse = get_langfuse_client()
 
-system_prompt = """
+system_prompt =        """
         You are a HubSpot Agent designed to help administrators create and manage leads, and setup meetings with
         potential leads.
         

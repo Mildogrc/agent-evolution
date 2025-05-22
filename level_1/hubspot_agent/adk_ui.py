@@ -23,12 +23,13 @@ class ADKAgentUI:
         self.emails = fetch_emails(search_param='(ALL)')
         self.user_id = "default_user"  # You might want to make this configurable
 
+
     def get_emails(self):
         return self.emails
         
     def check_agent(self):
         try:
-            response = requests.get(f"{API_BASE_URL}/")
+            response = requests.get(f"{API_BASE_URL}/docs")
             print("Is agent running?", response)
             if response.status_code == 200:
                 self.is_running = True
@@ -51,6 +52,8 @@ class ADKAgentUI:
             return False, f"Error: {response.text}"
         except Exception as e:
             return False, f"Error sending message: {str(e)}"
+        
+    
     
     def send_email(self, sender, recipient, subject, body, received_at, message_id):
         if not self.is_running and self.check_agent():
@@ -67,8 +70,7 @@ class ADKAgentUI:
                     parsed_date = dateutil.parser.parse(received_at)
                 received_at = parsed_date.isoformat()
             
-            # Format email data according to EmailContent model
-            email_data = {
+            payload_json = {
                 "sender": sender,
                 "recipient": recipient,
                 "subject": subject,
@@ -78,13 +80,33 @@ class ADKAgentUI:
                 "session_id": self.session_id,  # Include the session ID
                 "user_id": self.user_id  # Include the user ID
             }
+
+            # Format email data according to EmailContent model
+            email_data = {
+                "appName": "hubspot",
+                "userId": self.user_id,
+                # "sessionId": self.session_id,
+                "newMessage": {
+                    "parts": [{
+                        "text": json.dumps(payload_json)
+                    }]
+                }
+            }
             
             print("Sending email data:", email_data)  # Debug print
+
+
+            if not self.session_id:
+                self.session_id = f"s-{self.user_id}"
+                session_url = f"{API_BASE_URL}/apps/hubspot/users/{self.user_id}/sessions/{self.session_id}"
+                response = requests.post(session_url)
+
+            response = requests.post( f"{API_BASE_URL}/run", )
             
-            response = requests.post(
-                f"{API_BASE_URL}/process-email",
-                json=email_data
-            )
+            # response = requests.post(
+            #     f"{API_BASE_URL}/process-email",
+            #     json=email_data
+            # )
             
             if response.status_code == 200:
                 response_data = response.json()

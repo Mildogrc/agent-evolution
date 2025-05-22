@@ -105,36 +105,6 @@ async def process_email_with_agent(email_data: EmailContent):
             # You can handle other event types here (e.g., tool calls) if needed
 
 
-        # session = adk_app.create_session(
-        #     user_id=email_data.user_id,
-        #     session_id=email_data.session_id
-        # ) if hasattr(email_data, 'session_id') and email_data.session_id else adk_app.create_session(user_id=email_data.user_id)
-        # response_events = []
-        # final_text_response = None
-
-        # async for event in session.chat(input={"message": system_prompt}):
-        #     response_events.append(event.model_dump_json()) # Storing JSON serializable event data
-        #     if event.name == "agent:llm:final_response":
-        #         final_text_response = event.data.get("text")
-        #         return {
-        #             "status": "Email processed",
-        #             "agent_response": final_text_response,
-        #             "original_subject": email_data.subject,
-        #             "original_sender": email_data.sender,
-        #             "session_id": session.session_id
-        #         }
-        
-        # Fallback if no 'agent:llm:final_response' event with text was found
-        # This logic mirrors the /chat endpoint's fallback
-        if final_text_response:
-             return {"status": "Email processed", "agent_response": final_text_response, "session_id": session.session_id}
-
-        return {
-            "status": "Email processed, but no direct text response from agent.",
-            "agent_response_summary": "Agent processed the email content.",
-            "all_events": response_events, # Be cautious with returning all events in production
-            "session_id": session.session_id
-        }
 
     except Exception as e:
         # Log the exception for debugging
