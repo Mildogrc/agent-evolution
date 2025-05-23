@@ -99,8 +99,9 @@ This is a middle-ground implementation in which an MCP server, similar to an API
 
 * **Development Complexity**
   * We observed that developing MCP is not straightforward. The releases are still new (version 0.x), and when used with FastAPI, run into version incompatibility challenges. It took many attempts trying different versions to find the compatible library (refer to requirements.txt)
-  * Though we started with uvicorn to run the MCP server, we realized the need ofa user interface  monitor the MCP server status. We switched from `uvicorn` to using `streamlit`, allowing us to control starting/stopping the MCP server, but it still required us multiple refactoring to fix the integration between FastMCP, FastAPI, and tools.
+  * Though we started with uvicorn to run the MCP server, we realized the need of a user interface  monitor the MCP server status. We switched from `uvicorn` to using `streamlit`, trying us to control starting/stopping the MCP server; multiple refactoring to fix the integration between FastMCP, FastAPI, and tools was still needed.
   * Writing a correct prompt for langchain agent took (any agent will take) a while. This is a challenge that will appear in most agents. For instance, in our case, we had to alter the prompts to discard emails that are not leads, correctly identify contents for calling the tool, and correct the json data types.
+  * For creating a chat-like interface, Google ADK offers out-of-the-box setup. However, to run it as a server (using `adk api_agent`, for instance) is very cumbersome. This complexity increases if you are planning to use local models using `ollama`, as the agent needs a lot of explicit customization and prompting. Any tool failures result in the LLM going into an infinite loop retrying the failed action.
 
 ## Security of AI Agents
 
