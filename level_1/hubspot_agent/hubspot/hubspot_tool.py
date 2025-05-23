@@ -5,6 +5,10 @@ import keyring
 from hubspot.config import Config
 from hubspot.postgres_client import PostgresClient
 from langfuse.decorators import langfuse_context, observe
+from google.adk.agents import Agent
+from hubspot.langfuse_config import get_langfuse_client
+from google.adk.models.lite_llm import LiteLlm
+from google.adk.tools import FunctionTool
 
 class HubSpotTool():
     """Class to interact with the HubSpot API"""
@@ -133,7 +137,6 @@ class HubSpotTool():
         return self.call_hubspot_api_oauth(method='DELETE', endpoint=delete_lead_endpoint)
 
     def create_lead(self, lead_data: dict):
-
         # Example 1: Creating a new lead
         print("\n--- Creating a New Lead (Contact) using Private App Token ---")
         span = langfuse_context.get_current_observation()
@@ -236,9 +239,46 @@ class HubSpotTool():
         return response
 
 hstool = HubSpotTool()
-def create_lead(json_payload:dict):
+
+
+def create_lead(json_payload:dict):    
+    """Create a new lead (contact) in HubSpot and store it in the local database.
+
+    This function creates a new contact in HubSpot using the HubSpot API and then stores
+    the lead information in a local PostgreSQL database for tracking purposes.
+
+    Args:
+        lead_data (dict): A dictionary containing the lead's properties. The dictionary should
+            follow HubSpot's contact properties format. Example:
+            {
+                "properties": {
+                    "email": "contact@example.com",
+                    "firstname": "John",
+                    "lastname": "Doe",
+                    "phone": "123-456-7890",
+                    "company": "Example Corp",
+                    "website": "https://example.com",
+                    "lifecyclestage": "lead"
+                }
+            }
+
+    Returns:
+        str: The HubSpot ID of the newly created lead if successful, None if the creation fails.
+
+    Raises:
+        requests.exceptions.RequestException: If the API call to HubSpot fails.
+        Exception: If there's an error storing the lead in the local database.
+
+    Note:
+        - The function uses the HubSpot Private App Token for authentication
+        - All API calls and database operations are logged using Langfuse for observability
+        - The lead is stored in both HubSpot and a local PostgreSQL database
+    """
     print('Agent called "create_lead()"')
     span = langfuse_context.get_current_observation()
     if span:
         span.log(key="agent_create_lead_called", value="Agent called create_lead()")
     return hstool.create_lead(json_payload)
+
+create_lead_tool = FunctionTool(func=create_lead)
+# , name="create_lead", description="Create a new lead (contact) in HubSpot and store it in the local database.")
