@@ -103,6 +103,23 @@ class PostgresClient:
         finally:
             self.conn_pool.putconn(conn)
 
+    def find_lead_by_email(self, email_id):
+        """Retrieve a lead by email ID"""
+        conn = self.conn_pool.getconn()
+        try:
+            with conn.cursor() as cursor:
+                cursor.execute(
+                    """
+                    SELECT * FROM hubspot_leads WHERE email = %s
+                    """,
+                    (email_id,)
+                )
+                result = cursor.fetchone()
+                return result
+        finally:
+            self.conn_pool.putconn(conn)
+
+
     def get_lead_by_hubspot_id(self, hubspot_id):
         """Retrieve a lead by HubSpot ID"""
         conn = self.conn_pool.getconn()
