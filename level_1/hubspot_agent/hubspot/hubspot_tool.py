@@ -1,6 +1,5 @@
 import requests
 import json
-# import datetime # Keep for potential use, though not directly used in this simplified version
 import keyring
 
 # Local imports
@@ -23,8 +22,6 @@ class HubSpotTool():
         self.hubspot_access_token = keyring.get_password(service_id, access_token_key)
         if not self.hubspot_access_token:
             print("ERROR: HubSpot access token not found in keyring. Please check configuration.")
-            # Consider raising an exception if the token is critical for all operations
-            # raise ValueError("HubSpot access token not found in keyring.")
 
         db_user = keyring.get_password(service_id, db_user_key)
         db_password = keyring.get_password(service_id, db_password_key)
@@ -172,7 +169,7 @@ class HubSpotTool():
             print(f"ERROR: {error_message}")
             return {"status": "error", "message": error_message}
 
-    # This is the primary method for creating a lead, replacing the placeholder and create_lead2
+
     def create_lead(self, json_payload_from_llm: dict):
         try:
             email = json_payload_from_llm.get("email", None)
@@ -265,20 +262,10 @@ class HubSpotTool():
         
         # The payload for HubSpot API's PATCH contacts endpoint needs to be {"properties": {...}}
         # The LLM should provide `properties_to_update` as the inner dictionary.
-        # The `json_payload` from LLM should be `{"lead_id": "...", "properties": {"firstname": "newname"}}`
-        # The `call_hubspot_api_oauth` will use `new_lead_template` which expects the full structure.
-        # So, we pass `properties_to_update` to `new_lead_template` via the `data` argument of `call_hubspot_api_oauth`.
-        # However, new_lead_template is for *new* leads. For updates, HubSpot expects {"properties": ...}.
-        # Let's pass the already structured properties directly.
         hubspot_api_payload = {"properties": properties_to_update}
         print(f"Payload for HubSpot PATCH API: {json.dumps(hubspot_api_payload, indent=2)}")
         
         # For PATCH, new_lead_template might not be appropriate if it adds default fields for new leads.
-        # We'll pass the constructed hubspot_api_payload directly.
-        # To make call_hubspot_api_oauth skip its own new_lead_template formatting for this PATCH,
-        # we'd ideally have a flag or different logic.
-        # For now, let's assume new_lead_template is smart enough or we bypass it.
-        # A simpler way is to ensure the 'data' passed to call_hubspot_api_oauth is what HubSpot needs.
         response = self.call_hubspot_api_oauth('PATCH', modify_lead_endpoint, data=hubspot_api_payload)
 
         return json.dumps(response) if response else json.dumps({"status": "error", "message": "Update lead API call failed or returned no response."})
@@ -298,22 +285,16 @@ class HubSpotTool():
 
         create_meeting_endpoint = "/crm/v3/objects/meetings"
         
-        # Assuming json_payload from LLM is already in the correct HubSpot API format for meetings.
-        # The new_lead_template in call_hubspot_api_oauth might not be suitable for meetings.
-        # For POST to meetings, HubSpot expects the direct payload.
         response = self.call_hubspot_api_oauth('POST', create_meeting_endpoint, data=json_payload)
         
         if response and isinstance(response, dict) and response.get('id'):
             meeting_id = response.get('id')
-            # ... (DB storing logic as before) ...
             print(f"DB: Meeting {meeting_id} stored (details omitted for brevity).")
         
         return json.dumps(response) if response else json.dumps({"status": "error", "message": "Create meeting API call failed or returned no response."})
 
 # Instantiate the tool class
 hstool = HubSpotTool()
-
-# This is the function that will be wrapped by FunctionTool and called by the ADK agent
 
 # This is the function that will be wrapped by FunctionTool and called by the ADK agent
 def create_lead(json_payload:dict):    

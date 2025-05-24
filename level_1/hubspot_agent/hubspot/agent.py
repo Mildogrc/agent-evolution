@@ -1,6 +1,3 @@
-# Standard library imports
-# None
-
 # Third-party imports
 from google.adk.agents import Agent
 from google.adk.models.lite_llm import LiteLlm
@@ -44,17 +41,17 @@ Your instructions:
    - If this string contains '"status": "error"' for any other reason, inform the user about the error message. Do not try to call the tool again unless the user provides new or corrected information.
    - If the tool returns '"status": "success_hubspot_db_fail"', inform the user that the lead was created in HubSpot but there was an issue saving to the local database. Provide the HubSpot ID.        """
 CHOSEN_OLLAMA_MODEL = "llama2" 
-
-# Construct the model string that LiteLLM expects for Ollama
 LITELLM_MODEL_STRING = f"ollama/{CHOSEN_OLLAMA_MODEL}"
-# //f"ollama_chat/{CHOSEN_OLLAMA_MODEL}"
-# "ollama_chat/gemma3:latest"
-#"ollama/gemma:7b" 
+
+GEMINI_MODEL = "gemini-2.0-flash"
+
+model_name = GEMINI_MODEL
+
 tool_list = [create_lead]
 
 root_agent = Agent(
     name="hubspot_agent",
-    model="gemini-2.0-flash",
+    model=model_name,
     # model=LiteLlm(model=LITELLM_MODEL_STRING), 
     description=(
         "Agent to manage leads in HubSpot"
@@ -64,4 +61,4 @@ root_agent = Agent(
 )
 
 
-print(f"ADK Agent '{root_agent.name}' configured to use Ollama model via LiteLlm: '{LITELLM_MODEL_STRING}'")
+print(f"ADK Agent '{root_agent.name}' configured to use: '{LITELLM_MODEL_STRING}'")
