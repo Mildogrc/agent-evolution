@@ -111,6 +111,12 @@ The application includes comprehensive error handling for:
 - Authentication errors
 - Server connection problems
 
+## Testing
+
+### Testing with MCP Inspector
+
+Run the command `npx @modelcontextprotocol/inspector uv --directory level-1-mcp` 
+
 ## Contributing
 
 Feel free to submit issues and enhancement requests! 

@@ -119,6 +119,6 @@ class HubSpotTool():
         return response
 
 hstool = HubSpotTool()
-def create_lead(json_payload:dict) -> int:
+def create_lead(payload:dict) -> int:
     print('Agent called "create_lead()"')
-    return hstool.create_lead(json_payload)
+    return hstool.create_lead(payload)
